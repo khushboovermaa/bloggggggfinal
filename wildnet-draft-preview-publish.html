@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Wildnet Blog — Draft · Preview · Publish</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --wn-gold:#f59e0b;--wn-dark:#1a1f2e;--wn-ink:#1f2937;
+  --wn-muted:#6b7280;--wn-border:#e5e7eb;--wn-bg:#f9fafb;
+  --draft-color:#6366f1;--preview-color:#0ea5e9;--live-color:#10b981;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f0f2f5;min-height:100vh;color:var(--wn-ink)}
+
+/* ── TOP TOOLBAR ── */
+.toolbar{background:var(--wn-dark);border-bottom:3px solid var(--wn-gold);position:sticky;top:0;z-index:200;padding:0 20px}
+.toolbar-inner{max-width:1400px;margin:0 auto;display:flex;align-items:center;gap:16px;height:58px}
+.toolbar-logo{display:flex;align-items:center;gap:8px;text-decoration:none;flex-shrink:0}
+.logo-mark{width:32px;height:32px;background:var(--wn-gold);border-radius:5px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:12px;color:var(--wn-dark);letter-spacing:-0.5px}
+.logo-text{color:#fff;font-weight:700;font-size:13px;line-height:1.2}
+.logo-text span{display:block;font-size:9px;color:#94a3b8;font-weight:400;letter-spacing:0.3px}
+.toolbar-sep{width:1px;height:28px;background:rgba(255,255,255,0.1);flex-shrink:0}
+
+/* Stage tabs */
+.stage-tabs{display:flex;gap:4px;flex-shrink:0}
+.stage-tab{display:flex;align-items:center;gap:6px;padding:6px 14px;border-radius:5px;font-size:12px;font-weight:600;cursor:pointer;border:none;background:transparent;color:#94a3b8;transition:all .15s;position:relative}
+.stage-tab .dot{width:7px;height:7px;border-radius:50%;background:currentColor;opacity:0.4;transition:opacity .15s}
+.stage-tab.active{color:#fff;background:rgba(255,255,255,0.1)}
+.stage-tab.active .dot{opacity:1}
+.stage-tab[data-stage="draft"].active{color:#a5b4fc}
+.stage-tab[data-stage="draft"].active .dot{background:#6366f1}
+.stage-tab[data-stage="preview"].active{color:#7dd3fc}
+.stage-tab[data-stage="preview"].active .dot{background:#0ea5e9}
+.stage-tab[data-stage="live"].active{color:#6ee7b7}
+.stage-tab[data-stage="live"].active .dot{background:#10b981}
+
+/* post meta in toolbar */
+.toolbar-post-title{flex:1;min-width:0;font-size:13px;font-weight:600;color:#d1d5db;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.toolbar-post-title span{color:#9ca3af;font-weight:400;font-size:11px;margin-left:6px}
+
+/* toolbar actions */
+.toolbar-actions{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:5px;font-size:12px;font-weight:700;cursor:pointer;border:none;transition:all .15s;text-decoration:none;white-space:nowrap}
+.btn-ghost{background:rgba(255,255,255,0.07);color:#d1d5db;border:1px solid rgba(255,255,255,0.12)}
+.btn-ghost:hover{background:rgba(255,255,255,0.12);color:#fff}
+.btn-preview{background:#0ea5e9;color:#fff}
+.btn-preview:hover{background:#0284c7}
+.btn-publish{background:var(--wn-gold);color:var(--wn-dark)}
+.btn-publish:hover{background:#d97706}
+.btn-unpublish{background:#ef4444;color:#fff}
+.btn-unpublish:hover{background:#dc2626}
+
+/* ── STAGE BANNER ── */
+.stage-banner{padding:8px 20px;text-align:center;font-size:11px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:8px}
+.stage-banner.draft{background:#eef2ff;color:#4338ca;border-bottom:1px solid #c7d2fe}
+.stage-banner.preview{background:#f0f9ff;color:#0369a1;border-bottom:1px solid #bae6fd}
+.stage-banner.live{background:#f0fdf4;color:#166534;border-bottom:1px solid #bbf7d0}
+.stage-banner .badge{display:inline-flex;align-items:center;gap:4px;background:currentColor;color:#fff;padding:2px 8px;border-radius:3px;font-size:9px}
+.stage-banner .badge svg{width:9px;height:9px;fill:#fff}
+
+/* ── PANELS ── */
+.panel{display:none;max-width:1400px;margin:0 auto;padding:24px 20px}
+.panel.active{display:block}
+
+/* ── DRAFT PANEL ── */
+.draft-layout{display:grid;grid-template-columns:1fr 340px;gap:24px;align-items:start}
+@media(max-width:900px){.draft-layout{grid-template-columns:1fr}}
+
+.editor-card{background:#fff;border-radius:8px;border:1px solid var(--wn-border);overflow:hidden}
+.editor-card-header{padding:14px 18px;border-bottom:1px solid var(--wn-border);display:flex;align-items:center;gap:10px;background:#fafafa}
+.editor-card-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--wn-muted)}
+.editor-card-body{padding:18px}
+
+.field-group{margin-bottom:18px}
+.field-group:last-child{margin-bottom:0}
+.field-label{font-size:11px;font-weight:700;color:var(--wn-muted);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.field-label .required{color:#ef4444;font-size:10px}
+.field-input{width:100%;padding:9px 12px;border:1.5px solid var(--wn-border);border-radius:5px;font-size:14px;color:var(--wn-ink);background:#fff;transition:border-color .15s;font-family:inherit;line-height:1.5}
+.field-input:focus{outline:none;border-color:var(--wn-gold)}
+textarea.field-input{min-height:220px;resize:vertical;line-height:1.75}
+.field-hint{font-size:11px;color:#9ca3af;margin-top:5px}
+.char-count{font-size:10px;color:#9ca3af;text-align:right;margin-top:3px}
+
+.meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+select.field-input{cursor:pointer}
+
+/* sidebar widgets */
+.sidebar-stack{display:flex;flex-direction:column;gap:16px}
+.widget{background:#fff;border-radius:8px;border:1px solid var(--wn-border);overflow:hidden}
+.widget-header{padding:11px 16px;border-bottom:1px solid var(--wn-border);background:#fafafa;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.widget-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--wn-muted)}
+.widget-body{padding:14px 16px}
+
+/* Status widget */
+.status-row{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid #f9fafb;font-size:13px}
+.status-row:last-child{border-bottom:none}
+.status-key{color:var(--wn-muted);font-size:12px}
+.status-val{font-weight:600;color:var(--wn-ink);font-size:12px}
+.status-val.draft{color:#6366f1}
+.status-val.preview{color:#0ea5e9}
+.status-val.live{color:#10b981}
+.status-val.unsaved{color:#f59e0b}
+
+/* Checklist widget */
+.checklist-item{display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid #f9fafb;font-size:12px;color:var(--wn-ink)}
+.checklist-item:last-child{border-bottom:none}
+.check-icon{width:16px;height:16px;border-radius:50%;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:900}
+.check-icon.pass{background:#dcfce7;color:#16a34a}
+.check-icon.fail{background:#fee2e2;color:#dc2626}
+.check-icon.warn{background:#fef3c7;color:#d97706}
+
+/* AI suggestions */
+.ai-chip{display:inline-flex;align-items:center;gap:4px;background:#fef3c7;color:#92400e;border:1px solid #fde68a;border-radius:4px;padding:4px 8px;font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;margin:3px}
+.ai-chip:hover{background:#fed7aa;border-color:#fb923c;color:#7c2d12}
+
+/* ── PREVIEW PANEL ── */
+.preview-toolbar{background:#fff;border:1px solid var(--wn-border);border-radius:8px;padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.viewport-btn{padding:6px 12px;border-radius:5px;font-size:11px;font-weight:600;cursor:pointer;border:1.5px solid var(--wn-border);background:#fff;color:var(--wn-muted);transition:all .15s;display:flex;align-items:center;gap:4px}
+.viewport-btn.active{border-color:var(--wn-gold);background:#fef9ee;color:#92400e}
+.preview-frame-wrap{background:#fff;border:1px solid var(--wn-border);border-radius:8px;overflow:hidden;transition:max-width .25s}
+.preview-frame-wrap.desktop{max-width:100%}
+.preview-frame-wrap.tablet{max-width:768px;margin:0 auto;border-left-width:6px;border-right-width:6px;border-color:#374151;border-radius:16px}
+.preview-frame-wrap.mobile{max-width:390px;margin:0 auto;border-left-width:6px;border-right-width:6px;border-color:#374151;border-radius:24px}
+.preview-frame{width:100%;height:82vh;border:none;display:block}
+
+/* ── PUBLISH PANEL ── */
+.publish-layout{display:grid;grid-template-columns:1fr 320px;gap:24px;align-items:start}
+@media(max-width:900px){.publish-layout{grid-template-columns:1fr}}
+
+.publish-checklist-item{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid #f3f4f6}
+.publish-checklist-item:last-child{border-bottom:none}
+.pci-icon{width:28px;height:28px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px}
+.pci-icon.pass{background:#dcfce7;color:#16a34a}
+.pci-icon.fail{background:#fee2e2;color:#dc2626}
+.pci-icon.warn{background:#fef3c7;color:#d97706}
+.pci-label{font-size:13px;font-weight:600;color:var(--wn-ink)}
+.pci-sub{font-size:11px;color:var(--wn-muted);margin-top:2px}
+
+.publish-action-zone{background:#fff;border:1px solid var(--wn-border);border-radius:8px;padding:24px;text-align:center}
+.publish-status-icon{width:64px;height:64px;border-radius:50%;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:26px}
+.publish-status-icon.ready{background:#dcfce7}
+.publish-status-icon.not-ready{background:#fee2e2}
+.publish-status-icon.published{background:#d1fae5}
+.publish-title{font-size:16px;font-weight:700;color:var(--wn-ink);margin-bottom:6px}
+.publish-sub{font-size:13px;color:var(--wn-muted);line-height:1.6;margin-bottom:20px}
+.publish-btn-full{width:100%;padding:12px;border-radius:6px;font-size:14px;font-weight:700;cursor:pointer;border:none;transition:all .15s}
+.publish-btn-full.go{background:var(--wn-gold);color:var(--wn-dark)}
+.publish-btn-full.go:hover{background:#d97706}
+.publish-btn-full.go:disabled{opacity:0.45;cursor:not-allowed}
+.publish-btn-full.unpublish{background:#fff;color:#ef4444;border:2px solid #ef4444;margin-top:8px}
+.publish-btn-full.unpublish:hover{background:#fef2f2}
+
+.live-url-box{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;padding:10px 14px;margin-top:14px;font-size:12px;color:#166534;display:flex;align-items:center;gap:8px;justify-content:space-between}
+.live-url-copy{font-size:10px;font-weight:700;color:#15803d;cursor:pointer;background:#dcfce7;border:none;padding:3px 8px;border-radius:3px;transition:all .15s}
+.live-url-copy:hover{background:#bbf7d0}
+
+/* History log */
+.history-entry{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid #f9fafb;font-size:12px}
+.history-entry:last-child{border-bottom:none}
+.history-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.history-dot.draft{background:#6366f1}
+.history-dot.preview{background:#0ea5e9}
+.history-dot.live{background:#10b981}
+.history-time{color:#9ca3af;font-size:10px;flex-shrink:0}
+.history-label{color:var(--wn-ink);flex:1}
+
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:500;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{background:#fff;border-radius:10px;padding:28px;max-width:440px;width:calc(100% - 32px);transform:scale(0.95);transition:transform .2s}
+.modal-overlay.open .modal{transform:scale(1)}
+.modal-icon{font-size:36px;text-align:center;margin-bottom:12px}
+.modal-title{font-size:18px;font-weight:800;color:var(--wn-ink);margin-bottom:8px;text-align:center}
+.modal-sub{font-size:13px;color:var(--wn-muted);line-height:1.65;text-align:center;margin-bottom:22px}
+.modal-actions{display:flex;gap:10px}
+.modal-btn{flex:1;padding:10px;border-radius:5px;font-size:13px;font-weight:700;cursor:pointer;border:none;transition:all .15s}
+.modal-btn.cancel{background:#f3f4f6;color:var(--wn-muted)}
+.modal-btn.cancel:hover{background:#e5e7eb}
+.modal-btn.confirm{background:var(--wn-gold);color:var(--wn-dark)}
+.modal-btn.confirm:hover{background:#d97706}
+.modal-btn.danger{background:#ef4444;color:#fff}
+.modal-btn.danger:hover{background:#dc2626}
+
+/* toast */
+.toast{position:fixed;bottom:24px;right:24px;background:#1f2937;color:#fff;padding:12px 18px;border-radius:6px;font-size:13px;font-weight:600;z-index:999;transform:translateY(12px);opacity:0;transition:all .25s;display:flex;align-items:center;gap:8px;max-width:320px;pointer-events:none}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.success{border-left:4px solid #10b981}
+.toast.warning{border-left:4px solid #f59e0b}
+.toast.error{border-left:4px solid #ef4444}
+
+/* unsaved dot */
+.unsaved-dot{width:7px;height:7px;border-radius:50%;background:#f59e0b;display:none}
+.unsaved-dot.show{display:inline-block}
+</style>
+</head>
+<body>
+
+<!-- TOOLBAR -->
+<div class="toolbar">
+  <div class="toolbar-inner">
+    <a href="#" class="toolbar-logo">
+      <div class="logo-mark">WN</div>
+      <div class="logo-text">Wildnet<span>Blog Manager</span></div>
+    </a>
+    <div class="toolbar-sep"></div>
+
+    <div class="stage-tabs">
+      <button class="stage-tab active" data-stage="draft" onclick="setStage('draft')">
+        <span class="dot"></span> Draft
+      </button>
+      <button class="stage-tab" data-stage="preview" onclick="setStage('preview')">
+        <span class="dot"></span> Preview
+      </button>
+      <button class="stage-tab" data-stage="live" onclick="setStage('live')">
+        <span class="dot"></span> Publish
+      </button>
+    </div>
+
+    <div class="toolbar-sep"></div>
+    <div class="toolbar-post-title" id="toolbar-title">
+      A Practical Guide to the Best AI Search Optimization Techniques in 2026
+      <span id="unsaved-dot" class="unsaved-dot"></span>
+    </div>
+
+    <div class="toolbar-actions">
+      <button class="btn btn-ghost" onclick="saveDraft()">💾 Save Draft</button>
+      <button class="btn btn-preview" onclick="goPreview()">👁 Preview</button>
+      <button class="btn btn-publish" id="toolbar-publish-btn" onclick="setStage('live')">🚀 Publish</button>
+    </div>
+  </div>
+</div>
+
+<!-- STAGE BANNER -->
+<div class="stage-banner draft" id="stage-banner">
+  <span>✏️ DRAFT</span>
+  <span>— This post is not visible to the public. Review and publish when ready.</span>
+</div>
+
+<!-- ═══════════════════════════════════
+     PANEL 1 — DRAFT (EDITOR)
+═══════════════════════════════════ -->
+<div class="panel active" id="panel-draft">
+  <div class="draft-layout">
+
+    <!-- MAIN EDITOR -->
+    <div style="display:flex;flex-direction:column;gap:16px">
+
+      <div class="editor-card">
+        <div class="editor-card-header">
+          <div class="editor-card-title">📝 Post Content</div>
+        </div>
+        <div class="editor-card-body">
+          <div class="field-group">
+            <div class="field-label">Post Title <span class="required">*</span></div>
+            <input class="field-input" id="field-title" type="text" value="A Practical Guide to the Best AI Search Optimization Techniques in 2026" oninput="onFieldChange()">
+            <div class="char-count"><span id="title-count">82</span> / 70 chars (Google truncates beyond 60)</div>
+          </div>
+
+          <div class="field-group">
+            <div class="field-label">Meta Description <span class="required">*</span></div>
+            <textarea class="field-input" id="field-meta" rows="3" oninput="onFieldChange()">Discover the best AI search optimization techniques in 2026. Learn how to get cited by Google AI Overviews, Perplexity, and ChatGPT Search — with actionable tactics from Wildnet's SEO team.</textarea>
+            <div class="char-count"><span id="meta-count">216</span> / 160 chars recommended</div>
+          </div>
+
+          <div class="field-group">
+            <div class="field-label">Focus Keyword</div>
+            <input class="field-input" id="field-keyword" type="text" value="best AI search optimization techniques" oninput="onFieldChange()">
+          </div>
+
+          <div class="field-group">
+            <div class="field-label">Post Body (HTML or plain text)</div>
+            <textarea class="field-input" id="field-body" rows="14" oninput="onFieldChange()">Google's AI Overviews now appear on a significant share of all search queries in 2026. The discovery layer has shifted from a list of blue links to synthesised, cited answers — and most websites have not yet adapted their content strategy to match.
+
+AI search engines do not crawl the web in real time the way Googlebot does. They retrieve from indexes that are built from content already ranking well in conventional search.
+
+Based on public research from Authoritas, Search Engine Land, and Gartner's 2026 Hype Cycle, our team has tracked a set of techniques that consistently correlate with AI citation and visibility:
+
+• Lead with a definition — open every section with a direct answer.
+• Keep citation-ready passages between 40–80 words.
+• Name your sources inline for credibility signals.
+• Build third-party mentions across press, podcasts, and directories.</textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="editor-card">
+        <div class="editor-card-header">
+          <div class="editor-card-title">🤖 AI Suggestions</div>
+        </div>
+        <div class="editor-card-body">
+          <div style="font-size:12px;color:var(--wn-muted);margin-bottom:10px">Click a suggestion to apply it to your post ↓</div>
+          <div id="ai-chips">
+            <span class="ai-chip" onclick="applyChip(this,'Add FAQ section with 5 questions')">+ Add FAQ section</span>
+            <span class="ai-chip" onclick="applyChip(this,'Improve passage clarity for AI citation')">✨ Improve passage clarity</span>
+            <span class="ai-chip" onclick="applyChip(this,'Add Key Takeaways box')">📋 Add Key Takeaways</span>
+            <span class="ai-chip" onclick="applyChip(this,'Add stats infographic block')">📊 Add stats block</span>
+            <span class="ai-chip" onclick="applyChip(this,'Shorten paragraphs to 40–80 words')">✂️ Shorten paragraphs</span>
+            <span class="ai-chip" onclick="applyChip(this,'Add pull quote')">💬 Add pull quote</span>
+            <span class="ai-chip" onclick="applyChip(this,'Optimise title tag length')">🏷 Fix title length</span>
+            <span class="ai-chip" onclick="applyChip(this,'Add internal links')">🔗 Add internal links</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar-stack">
+
+      <!-- Status -->
+      <div class="widget">
+        <div class="widget-header">
+          <div class="widget-title">Post Status</div>
+          <span style="font-size:10px;font-weight:700;color:#6366f1;background:#eef2ff;padding:2px 7px;border-radius:3px" id="status-badge">DRAFT</span>
+        </div>
+        <div class="widget-body">
+          <div class="status-row"><span class="status-key">Status</span><span class="status-val draft" id="status-val">Draft</span></div>
+          <div class="status-row"><span class="status-key">Author</span><span class="status-val">Priya Sharma</span></div>
+          <div class="status-row"><span class="status-key">Category</span>
+            <select class="field-input" style="padding:3px 6px;font-size:11px;width:auto;border-color:#e5e7eb">
+              <option>SEO</option><option>PPC</option><option>Content</option><option>AI Marketing</option>
+            </select>
+          </div>
+          <div class="status-row"><span class="status-key">Scheduled</span><span class="status-val">—</span></div>
+          <div class="status-row"><span class="status-key">Last saved</span><span class="status-val" id="last-saved">Not saved yet</span></div>
+        </div>
+      </div>
+
+      <!-- SEO Score -->
+      <div class="widget">
+        <div class="widget-header">
+          <div class="widget-title">SEO Checklist</div>
+          <span style="font-size:11px;font-weight:700;color:#10b981" id="seo-score">7 / 9 ✓</span>
+        </div>
+        <div class="widget-body" id="seo-checklist">
+          <div class="checklist-item"><span class="check-icon pass">✓</span><span>Title tag present</span></div>
+          <div class="checklist-item"><span class="check-icon warn">!</span><span>Title 82 chars — consider shortening to 60</span></div>
+          <div class="checklist-item"><span class="check-icon pass">✓</span><span>Meta description present</span></div>
+          <div class="checklist-item"><span class="check-icon warn">!</span><span>Meta 216 chars — aim for 120–160</span></div>
+          <div class="checklist-item"><span class="check-icon pass">✓</span><span>Focus keyword defined</span></div>
+          <div class="checklist-item"><span class="check-icon pass">✓</span><span>Keyword in title</span></div>
+          <div class="checklist-item"><span class="check-icon pass">✓</span><span>Body content present (words: <span id="word-count">102</span>)</span></div>
+          <div class="checklist-item"><span class="check-icon pass">✓</span><span>FAQPage schema ready</span></div>
+          <div class="checklist-item"><span class="check-icon pass">✓</span><span>BreadcrumbList schema ready</span></div>
+        </div>
+      </div>
+
+      <!-- Publish schedule -->
+      <div class="widget">
+        <div class="widget-header"><div class="widget-title">Schedule (optional)</div></div>
+        <div class="widget-body">
+          <div class="field-group" style="margin-bottom:0">
+            <div class="field-label" style="margin-bottom:5px">Publish date / time</div>
+            <input class="field-input" type="datetime-local" style="font-size:12px;padding:7px 10px" id="schedule-dt">
+            <div class="field-hint">Leave blank to publish immediately when you click Publish.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Activity -->
+      <div class="widget">
+        <div class="widget-header"><div class="widget-title">Activity Log</div></div>
+        <div class="widget-body" id="activity-log">
+          <div class="history-entry">
+            <span class="history-dot draft"></span>
+            <span class="history-label">Draft created</span>
+            <span class="history-time">Just now</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     PANEL 2 — PREVIEW
+═══════════════════════════════════ -->
+<div class="panel" id="panel-preview">
+  <div class="preview-toolbar">
+    <span style="font-size:11px;font-weight:700;color:var(--wn-muted);text-transform:uppercase;letter-spacing:0.7px">Viewport</span>
+    <button class="viewport-btn active" onclick="setViewport('desktop',this)">🖥 Desktop</button>
+    <button class="viewport-btn" onclick="setViewport('tablet',this)">📱 Tablet</button>
+    <button class="viewport-btn" onclick="setViewport('mobile',this)">📲 Mobile</button>
+    <div style="margin-left:auto;font-size:12px;color:var(--wn-muted)">Viewing draft content — not visible to the public</div>
+    <button class="btn btn-publish" onclick="setStage('live')">Looks good → Publish 🚀</button>
+  </div>
+
+  <div class="preview-frame-wrap desktop" id="preview-frame-wrap">
+    <iframe class="preview-frame" id="preview-frame" src="about:blank"></iframe>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     PANEL 3 — PUBLISH
+═══════════════════════════════════ -->
+<div class="panel" id="panel-live">
+  <div class="publish-layout">
+
+    <!-- Pre-publish checklist -->
+    <div class="editor-card">
+      <div class="editor-card-header">
+        <div class="editor-card-title">🚦 Pre-Publish Checklist</div>
+        <span style="font-size:11px;color:var(--wn-muted)" id="publish-score-label">Checking…</span>
+      </div>
+      <div class="editor-card-body" id="publish-checklist">
+
+        <div class="publish-checklist-item">
+          <div class="pci-icon pass">✓</div>
+          <div><div class="pci-label">Title tag present and has keyword</div><div class="pci-sub">Keyword "best AI search optimization techniques" found in title ✓</div></div>
+        </div>
+        <div class="publish-checklist-item">
+          <div class="pci-icon warn">!</div>
+          <div><div class="pci-label">Title length</div><div class="pci-sub">82 characters — Google may truncate. Aim for 60 or under.</div></div>
+        </div>
+        <div class="publish-checklist-item">
+          <div class="pci-icon pass">✓</div>
+          <div><div class="pci-label">Meta description present</div><div class="pci-sub">216 characters — slightly long but acceptable.</div></div>
+        </div>
+        <div class="publish-checklist-item">
+          <div class="pci-icon pass">✓</div>
+          <div><div class="pci-label">Post body has content</div><div class="pci-sub">102 words detected in body field.</div></div>
+        </div>
+        <div class="publish-checklist-item">
+          <div class="pci-icon pass">✓</div>
+          <div><div class="pci-label">FAQPage JSON-LD schema</div><div class="pci-sub">5 FAQ items will be injected as structured data on publish.</div></div>
+        </div>
+        <div class="publish-checklist-item">
+          <div class="pci-icon pass">✓</div>
+          <div><div class="pci-label">BreadcrumbList schema</div><div class="pci-sub">Home → Blog → SEO → post title — will be injected on publish.</div></div>
+        </div>
+        <div class="publish-checklist-item">
+          <div class="pci-icon pass">✓</div>
+          <div><div class="pci-label">Author assigned</div><div class="pci-sub">Priya Sharma · SEO Director · Reviewed by Anil Kumar</div></div>
+        </div>
+        <div class="publish-checklist-item">
+          <div class="pci-icon pass">✓</div>
+          <div><div class="pci-label">Sources block with numbered citations</div><div class="pci-sub">5 sources with verified URLs included in post template.</div></div>
+        </div>
+        <div class="publish-checklist-item" id="schedule-check">
+          <div class="pci-icon pass">✓</div>
+          <div><div class="pci-label">Publish timing</div><div class="pci-sub" id="schedule-check-sub">Will publish immediately on click.</div></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Publish action zone -->
+    <div style="display:flex;flex-direction:column;gap:16px">
+
+      <div class="publish-action-zone" id="publish-action-zone">
+        <div class="publish-status-icon ready" id="publish-icon">🚀</div>
+        <div class="publish-title" id="publish-action-title">Ready to Publish</div>
+        <p class="publish-sub" id="publish-action-sub">7 of 9 checks passed. Minor warnings won't block publishing. Click below to make this post live on the Wildnet website.</p>
+
+        <div style="background:#f9fafb;border:1px solid var(--wn-border);border-radius:6px;padding:12px 14px;margin-bottom:16px;text-align:left">
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;color:var(--wn-muted);margin-bottom:6px">Publishing to</div>
+          <div style="font-size:13px;font-weight:600;color:var(--wn-ink);word-break:break-all">wildnettechnologies.com/blogs/best-ai-search-optimization-techniques-2026/</div>
+        </div>
+
+        <button class="publish-btn-full go" id="main-publish-btn" onclick="confirmPublish()">🚀 Publish Now</button>
+        <div id="unpublish-zone" style="display:none">
+          <button class="publish-btn-full unpublish" onclick="confirmUnpublish()">↩ Unpublish (Return to Draft)</button>
+        </div>
+        <div class="live-url-box" id="live-url-box" style="display:none">
+          <span id="live-url-text">wildnettechnologies.com/blogs/best-ai-search-opt…</span>
+          <button class="live-url-copy" onclick="copyLiveUrl()">Copy URL</button>
+        </div>
+      </div>
+
+      <!-- Post history -->
+      <div class="widget">
+        <div class="widget-header"><div class="widget-title">Revision History</div></div>
+        <div class="widget-body" id="revision-log">
+          <div class="history-entry">
+            <span class="history-dot draft"></span>
+            <span class="history-label">Draft created</span>
+            <span class="history-time">Just now</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<!-- ── PUBLISH CONFIRM MODAL ── -->
+<div class="modal-overlay" id="publish-modal">
+  <div class="modal">
+    <div class="modal-icon">🚀</div>
+    <div class="modal-title">Publish this post?</div>
+    <p class="modal-sub">This will make the post publicly visible on the Wildnet website. You can unpublish it at any time from this dashboard.</p>
+    <div class="modal-actions">
+      <button class="modal-btn cancel" onclick="closeModal('publish-modal')">Cancel</button>
+      <button class="modal-btn confirm" onclick="doPublish()">Yes, Publish Now</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── UNPUBLISH CONFIRM MODAL ── -->
+<div class="modal-overlay" id="unpublish-modal">
+  <div class="modal">
+    <div class="modal-icon">↩</div>
+    <div class="modal-title">Unpublish this post?</div>
+    <p class="modal-sub">The post will be removed from public view immediately and returned to Draft status. You can re-publish it anytime.</p>
+    <div class="modal-actions">
+      <button class="modal-btn cancel" onclick="closeModal('unpublish-modal')">Cancel</button>
+      <button class="modal-btn danger" onclick="doUnpublish()">Yes, Unpublish</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ── STATE ── */
+var state={stage:'draft',published:false,savedAt:null,dirty:false};
+var history_log=[];
+
+/* ── STAGE MANAGEMENT ── */
+function setStage(s){
+  if(s==='preview')buildPreview();
+  state.stage=s;
+  // tabs
+  document.querySelectorAll('.stage-tab').forEach(function(t){
+    t.classList.toggle('active',t.dataset.stage===s);
+  });
+  // panels
+  document.getElementById('panel-draft').classList.toggle('active',s==='draft');
+  document.getElementById('panel-preview').classList.toggle('active',s==='preview');
+  document.getElementById('panel-live').classList.toggle('active',s==='live');
+  // banner
+  var b=document.getElementById('stage-banner');
+  b.className='stage-banner '+s;
+  if(s==='draft') b.innerHTML='<span>✏️ DRAFT</span><span>— This post is not visible to the public. Review and publish when ready.</span>';
+  else if(s==='preview') b.innerHTML='<span>👁 PREVIEW</span><span>— Simulated view of how this post will appear when published. Not public.</span>';
+  else if(s==='live' && state.published) b.innerHTML='<span>🟢 LIVE</span><span>— This post is published and publicly visible.</span>';
+  else b.innerHTML='<span>🚀 PUBLISH</span><span>— Review the checklist and publish when ready.</span>';
+  // update publish tab label
+  if(s==='live') updatePublishScheduleCheck();
+}
+
+function goPreview(){
+  buildPreview();
+  setStage('preview');
+  showToast('Preview built from current draft content','success');
+}
+
+/* ── DRAFT FIELD CHANGES ── */
+function onFieldChange(){
+  state.dirty=true;
+  document.getElementById('unsaved-dot').classList.add('show');
+  updateCounts();
+}
+
+function updateCounts(){
+  var title=document.getElementById('field-title').value;
+  var meta=document.getElementById('field-meta').value;
+  var body=document.getElementById('field-body').value;
+  document.getElementById('title-count').textContent=title.length;
+  document.getElementById('meta-count').textContent=meta.length;
+  var wc=body.trim().split(/\s+/).filter(function(w){return w.length>0;}).length;
+  document.getElementById('word-count').textContent=wc;
+  // update toolbar title
+  if(title) document.getElementById('toolbar-title').childNodes[0].textContent=title+' ';
+}
+
+function saveDraft(){
+  state.savedAt=new Date();
+  state.dirty=false;
+  document.getElementById('unsaved-dot').classList.remove('show');
+  var t=state.savedAt.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+  document.getElementById('last-saved').textContent='Saved at '+t;
+  addLog('draft','Draft saved');
+  addRevision('draft','Draft saved at '+t);
+  showToast('Draft saved successfully','success');
+}
+
+function applyChip(el,label){
+  el.style.background='#d1fae5';
+  el.style.borderColor='#6ee7b7';
+  el.style.color='#065f46';
+  el.textContent='✓ Applied';
+  el.onclick=null;
+  onFieldChange();
+  showToast(label+' — applied to post','success');
+}
+
+/* ── PREVIEW ── */
+var previewHTML='';
+function buildPreview(){
+  // Inject the full published blog HTML, replacing the title/meta in a banner
+  var title=document.getElementById('field-title').value||'Untitled';
+  var meta=document.getElementById('field-meta').value;
+  var body=document.getElementById('field-body').value;
+
+  // Build a preview note banner to inject at top of iframe
+  var draftBanner='<div style="position:fixed;top:0;left:0;right:0;z-index:9999;background:#6366f1;color:#fff;padding:8px 16px;font-family:sans-serif;font-size:12px;font-weight:700;letter-spacing:0.5px;display:flex;align-items:center;justify-content:space-between"><span>👁 PREVIEW MODE — Draft content, not publicly visible</span><span style="font-weight:400;opacity:.8">Title: '+escHtml(title.slice(0,60))+(title.length>60?'…':'')+'</span></div><div style="height:38px"></div>';
+
+  fetch('').then(function(){}).catch(function(){});
+  // Use the wildnet published preview as base, just inject draft banner
+  previewHTML=getDemoHTML(draftBanner,title);
+  var iframe=document.getElementById('preview-frame');
+  iframe.srcdoc=previewHTML;
+}
+
+function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function setViewport(vp, btn){
+  document.querySelectorAll('.viewport-btn').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+  var wrap=document.getElementById('preview-frame-wrap');
+  wrap.className='preview-frame-wrap '+vp;
+}
+
+/* ── PUBLISH FLOW ── */
+function updatePublishScheduleCheck(){
+  var dt=document.getElementById('schedule-dt').value;
+  var sub=document.getElementById('schedule-check-sub');
+  if(dt){
+    var d=new Date(dt);
+    sub.textContent='Scheduled for '+d.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})+' at '+d.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+  } else {
+    sub.textContent='Will publish immediately on click.';
+  }
+}
+
+function confirmPublish(){
+  document.getElementById('publish-modal').classList.add('open');
+}
+function confirmUnpublish(){
+  document.getElementById('unpublish-modal').classList.add('open');
+}
+function closeModal(id){
+  document.getElementById(id).classList.remove('open');
+}
+
+function doPublish(){
+  closeModal('publish-modal');
+  var btn=document.getElementById('main-publish-btn');
+  btn.textContent='Publishing…';btn.disabled=true;
+  setTimeout(function(){
+    state.published=true;
+    // update UI
+    btn.textContent='✓ Published';
+    btn.style.background='#10b981';
+    document.getElementById('publish-icon').className='publish-status-icon published';
+    document.getElementById('publish-icon').textContent='✅';
+    document.getElementById('publish-action-title').textContent='Post is Live';
+    document.getElementById('publish-action-sub').textContent='Your post is publicly visible on the Wildnet website. Share the URL or unpublish below.';
+    document.getElementById('live-url-box').style.display='flex';
+    document.getElementById('unpublish-zone').style.display='block';
+
+    // update stage badge/tab
+    var badge=document.getElementById('status-badge');
+    badge.textContent='LIVE';badge.style.background='#dcfce7';badge.style.color='#166534';
+    document.getElementById('status-val').textContent='Live';
+    document.getElementById('status-val').className='status-val live';
+    document.getElementById('toolbar-publish-btn').textContent='✓ Live';
+    document.getElementById('toolbar-publish-btn').classList.remove('btn-publish');
+    document.getElementById('toolbar-publish-btn').classList.add('btn-unpublish');
+    document.getElementById('toolbar-publish-btn').onclick=confirmUnpublish;
+
+    // banner
+    var b=document.getElementById('stage-banner');
+    b.className='stage-banner live';
+    b.innerHTML='<span>🟢 LIVE</span><span>— This post is published and publicly visible on the Wildnet website.</span>';
+
+    addLog('live','Post published');
+    addRevision('live','Published to wildnettechnologies.com');
+    showToast('🎉 Post published successfully!','success');
+  },1800);
+}
+
+function doUnpublish(){
+  closeModal('unpublish-modal');
+  state.published=false;
+  var btn=document.getElementById('main-publish-btn');
+  btn.textContent='🚀 Publish Now';
+  btn.disabled=false;
+  btn.style.background='';
+  document.getElementById('publish-icon').className='publish-status-icon ready';
+  document.getElementById('publish-icon').textContent='🚀';
+  document.getElementById('publish-action-title').textContent='Ready to Publish';
+  document.getElementById('publish-action-sub').textContent='Post returned to draft. Review and publish again when ready.';
+  document.getElementById('live-url-box').style.display='none';
+  document.getElementById('unpublish-zone').style.display='none';
+
+  var badge=document.getElementById('status-badge');
+  badge.textContent='DRAFT';badge.style.background='#eef2ff';badge.style.color='#4338ca';
+  document.getElementById('status-val').textContent='Draft';
+  document.getElementById('status-val').className='status-val draft';
+  document.getElementById('toolbar-publish-btn').textContent='🚀 Publish';
+  document.getElementById('toolbar-publish-btn').classList.add('btn-publish');
+  document.getElementById('toolbar-publish-btn').classList.remove('btn-unpublish');
+  document.getElementById('toolbar-publish-btn').onclick=function(){setStage('live');};
+
+  var b=document.getElementById('stage-banner');
+  b.className='stage-banner draft';
+  b.innerHTML='<span>✏️ DRAFT</span><span>— This post has been unpublished and returned to draft.</span>';
+  setStage('draft');
+  addLog('draft','Post unpublished → returned to Draft');
+  addRevision('draft','Unpublished');
+  showToast('Post unpublished — returned to Draft','warning');
+}
+
+function copyLiveUrl(){
+  var url='https://www.wildnettechnologies.com/blogs/best-ai-search-optimization-techniques-2026/';
+  if(navigator.clipboard) navigator.clipboard.writeText(url);
+  showToast('URL copied to clipboard','success');
+}
+
+/* ── ACTIVITY / REVISION LOGS ── */
+function addLog(type,label){
+  var now=new Date();
+  var t=now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+  var log=document.getElementById('activity-log');
+  var entry=document.createElement('div');
+  entry.className='history-entry';
+  entry.innerHTML='<span class="history-dot '+type+'"></span><span class="history-label">'+label+'</span><span class="history-time">'+t+'</span>';
+  log.insertBefore(entry,log.firstChild);
+}
+function addRevision(type,label){
+  var now=new Date();
+  var t=now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+  var log=document.getElementById('revision-log');
+  var entry=document.createElement('div');
+  entry.className='history-entry';
+  entry.innerHTML='<span class="history-dot '+type+'"></span><span class="history-label">'+label+'</span><span class="history-time">'+t+'</span>';
+  log.insertBefore(entry,log.firstChild);
+}
+
+/* ── TOAST ── */
+function showToast(msg,type){
+  var t=document.getElementById('toast');
+  t.textContent=msg;
+  t.className='toast '+(type||'success')+' show';
+  clearTimeout(t._timer);
+  t._timer=setTimeout(function(){t.classList.remove('show');},3200);
+}
+
+/* ── PREVIEW HTML ── */
+function getDemoHTML(banner, customTitle){
+  return `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escHtml(customTitle)} — Wildnet Technologies</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#fff;color:#1f2937;line-height:1.65}
+.site-header{background:#1a1f2e;border-bottom:3px solid #f59e0b;position:sticky;top:38px;z-index:100;padding:0 32px}
+.site-header-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:64px;gap:24px}
+.site-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.site-logo-mark{width:36px;height:36px;background:#f59e0b;border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;color:#1a1f2e}
+.site-logo-text{color:#fff;font-weight:700;font-size:15px;line-height:1.2}
+.site-logo-text span{display:block;font-size:10px;color:#94a3b8;font-weight:400}
+.site-nav{display:flex;gap:0}
+.site-nav a{color:#d1d5db;text-decoration:none;font-size:13px;font-weight:500;padding:8px 14px;border-radius:4px}
+.site-nav a.active{color:#f59e0b}
+.site-header-cta{background:#f59e0b;color:#1a1f2e;padding:9px 18px;border-radius:4px;font-size:13px;font-weight:700;text-decoration:none}
+.breadcrumb-bar{background:#f9fafb;border-bottom:1px solid #f3f4f6;padding:10px 32px}
+.breadcrumb-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:6px;font-size:12px;color:#9ca3af}
+.breadcrumb-inner a{color:#6b7280;text-decoration:none;font-weight:500}
+.breadcrumb-inner .sep{color:#d1d5db;font-size:11px}
+.breadcrumb-inner .current{color:#374151;font-weight:500}
+.page-body{max-width:1200px;margin:0 auto;padding:40px 32px;display:grid;grid-template-columns:1fr 280px;gap:56px;align-items:start}
+@media(max-width:900px){.page-body{grid-template-columns:1fr;padding:24px 20px}.sidebar{display:none}}
+.article h1{font-size:32px;font-weight:800;color:#0f172a;line-height:1.2;margin:0 0 6px;letter-spacing:-0.5px}
+.article h2{font-size:21px;font-weight:700;color:#111827;margin:38px 0 13px;padding-top:4px;border-top:2px solid #f3f4f6}
+.article p{margin:14px 0;font-size:16px;color:#374151;line-height:1.75}
+.article ul{margin:12px 0 12px 20px}
+.article ul li{font-size:15px;color:#374151;margin:6px 0;line-height:1.65}
+.meta-bar{display:flex;align-items:center;gap:16px;padding:18px 0;margin:14px 0 28px;border-top:1px solid #e5e7eb;border-bottom:1px solid #e5e7eb;flex-wrap:wrap}
+.meta-avatar{width:48px;height:48px;background:linear-gradient(135deg,#f59e0b,#ea580c);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:16px;flex-shrink:0}
+.meta-author-name{font-weight:700;color:#111827;font-size:15px}
+.meta-author-role{color:#6b7280;font-size:12px;margin-top:2px}
+.meta-stats{display:flex;gap:18px;flex-wrap:wrap;border-left:1px solid #e5e7eb;padding-left:18px;margin-left:4px}
+.meta-stat{display:flex;flex-direction:column}
+.meta-stat-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;color:#9ca3af;margin-bottom:3px}
+.meta-stat-val{font-size:12px;font-weight:600;color:#374151}
+.toc{background:#fff;border:1.5px solid #e5e7eb;border-left:4px solid #f59e0b;border-radius:0 8px 8px 0;padding:18px 22px;margin:0 0 32px}
+.toc-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:#9ca3af;margin-bottom:12px;display:flex;justify-content:space-between}
+.toc ol{list-style:none;counter-reset:toc;padding:0}
+.toc ol li{counter-increment:toc;display:flex;align-items:baseline;gap:8px;padding:5px 0;border-bottom:1px dashed #f3f4f6}
+.toc ol li:last-child{border-bottom:none}
+.toc ol li::before{content:counter(toc,"0" decimal);font-size:9px;font-weight:700;color:#d1d5db;min-width:16px;flex-shrink:0}
+.toc ol li a{font-size:13px;color:#374151;text-decoration:none;font-weight:500;line-height:1.45}
+.key-takeaways{background:linear-gradient(135deg,#1e3a5f,#1a2d4a);color:#fff;padding:26px 26px 22px;margin:0 0 32px;border-radius:8px}
+.kt-label{font-size:10px;color:#f59e0b;font-weight:700;text-transform:uppercase;letter-spacing:1.3px;margin-bottom:8px}
+.kt-title{font-size:16px;font-weight:700;color:#fff;margin:0 0 14px}
+.kt-list{list-style:none;display:flex;flex-direction:column;gap:8px}
+.kt-list li{display:flex;gap:9px;font-size:13px;color:#e2e8f0;line-height:1.55}
+.kt-list li::before{content:'→';color:#f59e0b;flex-shrink:0;font-weight:700}
+.stats-block{background:#2d3741;color:#fff;padding:28px 24px;margin:32px 0;border-radius:8px}
+.stats-eyebrow{font-size:10px;color:#f59e0b;font-weight:700;text-transform:uppercase;letter-spacing:1.4px;margin-bottom:5px}
+.stats-title{font-size:19px;color:#fff;font-weight:700;margin:0 0 3px}
+.stats-sub{color:#94a3b8;font-size:12px;margin:0 0 18px}
+.stats-grid{display:flex;flex-wrap:wrap;gap:10px}
+.stat-card{flex:1;min-width:130px;background:rgba(255,255,255,0.06);border-radius:6px;padding:16px 14px;border-left:3px solid #f59e0b}
+.stat-num{font-size:26px;font-weight:800;color:#f59e0b;line-height:1.05;margin-bottom:5px;font-family:Georgia,serif}
+.stat-desc{font-size:11px;color:#e2e8f0;line-height:1.5}
+.stat-src{font-size:9px;color:#94a3b8;margin-top:7px;text-transform:uppercase;letter-spacing:0.5px;font-weight:600}
+.pull-quote{margin:28px 0;padding:20px 24px 20px 28px;background:#fef3c7;border-left:5px solid #f59e0b;border-radius:0 6px 6px 0;font-size:16px;line-height:1.65;color:#451a03;font-style:italic;font-weight:500;position:relative}
+.pull-quote::before{content:'"';position:absolute;top:4px;left:10px;font-size:42px;color:#f59e0b;font-family:Georgia,serif;line-height:1;opacity:0.35}
+.pull-quote span{position:relative;display:block}
+.mid-cta{background:#fef9ee;border:1px solid #fde68a;border-left:4px solid #f59e0b;border-radius:0 6px 6px 0;padding:14px 18px;margin:32px 0;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.mid-cta-text strong{display:block;font-size:13px;color:#111827;margin-bottom:2px}
+.mid-cta-text span{font-size:12px;color:#6b7280}
+.mid-cta-btn{background:#f59e0b;color:#1f2937;padding:8px 16px;border-radius:4px;font-size:12px;font-weight:700;text-decoration:none;white-space:nowrap}
+.faq-item{border-bottom:1px solid #f3f4f6}
+.faq-q{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:13px 0;cursor:pointer}
+.faq-q-text{font-size:14px;font-weight:700;color:#111827;flex:1;line-height:1.4}
+.faq-icon{width:20px;height:20px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#6b7280;font-size:13px;flex-shrink:0;transition:all .2s;margin-top:1px}
+.faq-item.open .faq-icon{background:#fef3c7;border-color:#f59e0b;color:#f59e0b;transform:rotate(45deg)}
+.faq-a{font-size:13px;color:#374151;line-height:1.75;padding:0 0 13px;display:none}
+.faq-item.open .faq-a{display:block}
+.faq-badge{display:inline-flex;align-items:center;gap:5px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:4px;padding:3px 9px;margin-bottom:12px;font-size:9px;font-weight:700;color:#15803d;text-transform:uppercase;letter-spacing:0.8px}
+.sources{background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:20px 24px;margin:36px 0 0}
+.sources-heading{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:#9ca3af;margin:0 0 14px;display:flex;align-items:center;gap:8px}
+.sources-heading::after{content:'';flex:1;height:1px;background:#f3f4f6}
+.sources-list{list-style:none;display:flex;flex-direction:column;gap:9px}
+.sources-list li{display:flex;gap:9px;align-items:flex-start}
+.src-num{font-size:9px;font-weight:700;color:#fff;background:#9ca3af;border-radius:3px;padding:2px 5px;flex-shrink:0;margin-top:2px;min-width:18px;text-align:center;line-height:1.4}
+.src-title{font-size:12px;font-weight:600;color:#111827;line-height:1.4;display:block}
+.src-meta{font-size:10px;color:#6b7280;display:block}
+.src-link{font-size:10px;color:#f59e0b;text-decoration:none;font-weight:500;word-break:break-all;display:block}
+.closing-cta{background:#2d3741;color:#fff;padding:46px 28px;margin:44px 0 0;border-radius:8px;text-align:center}
+.cta-title{font-size:24px;font-weight:800;color:#fff;line-height:1.25;letter-spacing:-0.3px;margin:0 0 10px}
+.cta-title span{color:#f59e0b}
+.cta-sub{font-size:13px;line-height:1.65;color:#cbd5e1;max-width:560px;margin:0 auto 22px}
+.cta-btn{display:inline-block;background:#f59e0b;color:#1f2937;padding:12px 26px;border-radius:4px;font-weight:700;font-size:13px;text-decoration:none}
+.cta-trust{margin-top:14px;font-size:11px;color:#94a3b8}
+.sidebar{position:sticky;top:110px}
+.sidebar-widget{background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:18px;margin-bottom:18px}
+.sidebar-widget-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#9ca3af;margin:0 0 12px;display:flex;align-items:center;gap:7px}
+.sidebar-widget-title::after{content:'';flex:1;height:1px;background:#f3f4f6}
+.recent-post{display:flex;flex-direction:column;gap:3px;padding:9px 0;border-bottom:1px solid #f9fafb}
+.recent-post:last-child{border-bottom:none}
+.recent-post a{font-size:12px;font-weight:600;color:#111827;text-decoration:none;line-height:1.4}
+.recent-post a:hover{color:#f59e0b}
+.recent-post-date{font-size:10px;color:#9ca3af}
+.sidebar-cta{background:linear-gradient(135deg,#2d3741,#1a2332);border-radius:8px;padding:20px 18px;text-align:center;border:none}
+.sidebar-cta-title{font-size:14px;font-weight:700;color:#fff;margin:0 0 7px;line-height:1.3}
+.sidebar-cta-sub{font-size:11px;color:#94a3b8;margin:0 0 14px;line-height:1.5}
+.sidebar-cta-btn{display:block;background:#f59e0b;color:#1f2937;padding:9px;border-radius:4px;font-weight:700;font-size:11px;text-decoration:none;text-align:center}
+.sidebar-tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{background:#f3f4f6;color:#374151;font-size:10px;font-weight:500;padding:4px 9px;border-radius:4px;text-decoration:none}
+.reviewed-by{display:flex;align-items:center;gap:8px;padding:9px 12px;background:#f9fafb;border-radius:6px;margin:0 0 18px;font-size:11px;color:#6b7280}
+.reviewed-avatar{width:26px;height:26px;background:linear-gradient(135deg,#6366f1,#8b5cf6);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:9px;flex-shrink:0}
+.reviewed-by strong{color:#374151}
+.site-footer{background:#1a1f2e;color:#94a3b8;padding:36px 32px 24px;margin-top:64px}
+.site-footer-inner{max-width:1200px;margin:0 auto}
+.footer-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:36px;padding-bottom:28px;border-bottom:1px solid rgba(255,255,255,0.08)}
+.footer-brand-desc{font-size:12px;line-height:1.7;margin-top:9px;max-width:240px}
+.footer-col-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#fff;margin:0 0 10px}
+.footer-col a{display:block;font-size:12px;color:#94a3b8;text-decoration:none;margin-bottom:6px}
+.footer-bottom{display:flex;justify-content:space-between;align-items:center;padding-top:18px;font-size:10px;flex-wrap:wrap;gap:7px}
+.footer-bottom a{color:#6b7280;text-decoration:none}
+.footer-gp{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:4px;padding:4px 9px;font-size:9px;font-weight:600;color:#d1d5db}
+.footer-gp::before{content:'✓';color:#10b981;font-weight:900}
+#reading-progress{position:fixed;top:38px;left:0;height:3px;background:#f59e0b;width:0%;z-index:200;transition:width .1s linear}
+</style></head><body>
+${banner}
+<div id="reading-progress"></div>
+<header class="site-header">
+  <div class="site-header-inner">
+    <a href="#" class="site-logo"><div class="site-logo-mark">WN</div><div class="site-logo-text">Wildnet Technologies<span>Digital Marketing Agency</span></div></a>
+    <nav class="site-nav"><a href="#">Services</a><a href="#">SEO</a><a href="#">PPC</a><a href="#" class="active">Blog</a><a href="#">About</a></nav>
+    <a href="#" class="site-header-cta">Get Free Audit</a>
+  </div>
+</header>
+<div class="breadcrumb-bar">
+  <div class="breadcrumb-inner"><a href="#">Home</a><span class="sep">›</span><a href="#">Blog</a><span class="sep">›</span><a href="#">SEO</a><span class="sep">›</span><span class="current">${escHtml(customTitle.slice(0,55))}${customTitle.length>55?'…':''}</span></div>
+</div>
+<div class="page-body">
+  <article class="article">
+    <h1>${escHtml(customTitle)}</h1>
+    <div class="meta-bar">
+      <div class="meta-avatar">PS</div>
+      <div><div class="meta-author-name">Priya Sharma</div><div class="meta-author-role">SEO Director · 12+ years experience</div></div>
+      <div class="meta-stats">
+        <div class="meta-stat"><span class="meta-stat-label">Published</span><span class="meta-stat-val">May 27, 2026</span></div>
+        <div class="meta-stat"><span class="meta-stat-label">Read Time</span><span class="meta-stat-val">8 min</span></div>
+      </div>
+    </div>
+    <div class="reviewed-by"><div class="reviewed-avatar">AK</div><div><strong>Reviewed by Anil Kumar</strong>, Head of SEO · Wildnet Technologies</div></div>
+    <div class="key-takeaways">
+      <div class="kt-label">🎯 Key Takeaways</div>
+      <div class="kt-title">What you'll learn in this article</div>
+      <ul class="kt-list">
+        <li>AI search engines primarily retrieve from pages that already rank well in conventional search.</li>
+        <li>Passage-level clarity (40–80-word answers after each H2) increases citation likelihood.</li>
+        <li>Third-party mentions drive more AI citations than on-site content alone.</li>
+        <li>FAQPage and Article JSON-LD schema signal credibility to Google AI Overviews.</li>
+        <li>Brands with cross-channel visibility appear more consistently in AI responses.</li>
+      </ul>
+    </div>
+    <nav class="toc" id="wn-toc"><div class="toc-label">In this article <button onclick="var l=document.getElementById('tl');var o=l.style.display!='none';l.style.display=o?'none':'';this.textContent=o?'Expand ▸':'Collapse ▾'" style="background:none;border:none;cursor:pointer;font-size:10px;color:#9ca3af;font-weight:600">Collapse ▾</button></div><ol id="tl"></ol></nav>
+    <h2 id="s1">AI Search Has Changed the Game</h2>
+    <p>Google's AI Overviews now appear on a significant share of all search queries in 2026. The discovery layer has shifted from blue links to synthesised answers — and most websites have not adapted.<sup style="font-size:9px;font-weight:700;color:#f59e0b">[1]</sup></p>
+    <h2 id="s2">Understanding How AI Search Engines Select Sources</h2>
+    <p>AI search engines do not crawl the web in real time. They retrieve from indexes built from content already ranking well in conventional search. Strong organic rankings remain a prerequisite, not an alternative, to AI visibility.<sup style="font-size:9px;font-weight:700;color:#f59e0b">[2]</sup></p>
+    <div class="stats-block">
+      <div class="stats-eyebrow">📊 At A Glance</div>
+      <div class="stats-title">AI Search by the Numbers</div>
+      <p class="stats-sub">Where AI is reshaping discovery in 2026</p>
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-num">47%</div><div class="stat-desc">of Google searches now show AI Overviews</div><div class="stat-src">— BrightEdge 2026 <sup style="color:#f59e0b">[1]</sup></div></div>
+        <div class="stat-card"><div class="stat-num">100M+</div><div class="stat-desc">monthly active Perplexity users</div><div class="stat-src">— Perplexity <sup style="color:#f59e0b">[3]</sup></div></div>
+        <div class="stat-card"><div class="stat-num">40–80</div><div class="stat-desc">word range AI engines prefer to cite</div><div class="stat-src">— Search Engine Land <sup style="color:#f59e0b">[2]</sup></div></div>
+        <div class="stat-card"><div class="stat-num">2–4 mo</div><div class="stat-desc">typical lead time to see citation gains</div><div class="stat-src">— Wildnet</div></div>
+      </div>
+    </div>
+    <h2 id="s3">Best AI Search Optimization Techniques</h2>
+    <p>Based on research from Authoritas, Search Engine Land, and Gartner's 2026 Hype Cycle, these techniques consistently correlate with AI citation and visibility.<sup style="font-size:9px;font-weight:700;color:#f59e0b">[4]</sup></p>
+    <ul>
+      <li><strong>Lead with a definition.</strong> Open every section with a direct answer. AI models score leading sentences highest.</li>
+      <li><strong>Keep passages 40–80 words.</strong> Longer passages are frequently truncated or skipped.</li>
+      <li><strong>Name your sources inline.</strong> Sentences referencing named publications are cited at a higher rate.</li>
+      <li><strong>Build third-party mentions.</strong> Press, podcasts, and directories increase AI citation frequency.</li>
+    </ul>
+    <div class="mid-cta"><div class="mid-cta-text"><strong>Want an AI search visibility audit for your site?</strong><span>Free benchmark across Google AI Overviews, Perplexity, and ChatGPT Search.</span></div><a href="#" class="mid-cta-btn">Get Free Audit →</a></div>
+    <h2 id="s4">How PPC and Social Media Fit Into AI Search</h2>
+    <p>Brands with strong visibility across paid search, social media, and organic tend to appear more frequently in AI-generated responses — consistent with Authoritas's finding that cross-channel brand signal strength is one of the top three predictors of AI citation rate.<sup style="font-size:9px;font-weight:700;color:#f59e0b">[4]</sup></p>
+    <blockquote class="pull-quote"><span>AI search engines retrieve from indexes that already rank well. Pages that win in conventional search win in AI search.</span></blockquote>
+    <h2 id="s5">Measuring AI Search Performance</h2>
+    <p>Until dedicated tooling matures, run a weekly manual audit: check your top 20 queries through Google AI Overviews, Perplexity, and ChatGPT Search, record whether your domain appears, and log the cited passage. After two months the data reveals which content formats earn citations.</p>
+    <h2 id="s6">Conclusion</h2>
+    <p>The best AI search optimization techniques in 2026 are not a radical departure from sound SEO — they are an evolution. The fundamentals of clarity, authority, and structure are now more important than ever.</p>
+    <div class="faq-section" style="margin:36px 0 0">
+      <div class="faq-badge">✦ FAQPage Schema Active</div>
+      <div class="faq-list">
+        <div class="faq-item"><div class="faq-q"><span class="faq-q-text">What is AI search optimization?</span><span class="faq-icon">+</span></div><div class="faq-a">AI search optimization is the practice of structuring content so it is retrieved and cited by AI-powered search engines such as Google AI Overviews, Perplexity, and ChatGPT Search.</div></div>
+        <div class="faq-item"><div class="faq-q"><span class="faq-q-text">How long does it take to see results from AI SEO?</span><span class="faq-icon">+</span></div><div class="faq-a">Most brands see measurable citation gains within 2–4 months of implementing structured, passage-level optimisation and building third-party mentions.</div></div>
+        <div class="faq-item"><div class="faq-q"><span class="faq-q-text">Do I need to rank first to appear in AI Overviews?</span><span class="faq-icon">+</span></div><div class="faq-a">Not necessarily first — but you typically need to be within the top 10 organic results. AI search engines retrieve from indexes that already rank well.</div></div>
+        <div class="faq-item"><div class="faq-q"><span class="faq-q-text">Does PPC spend help with AI search visibility?</span><span class="faq-icon">+</span></div><div class="faq-a">Indirectly yes — brands with consistent paid visibility benefit from stronger brand recognition signals that AI models infer from web-wide co-occurrence data.</div></div>
+        <div class="faq-item"><div class="faq-q"><span class="faq-q-text">What schema markup should I add for AI search?</span><span class="faq-icon">+</span></div><div class="faq-a">Prioritise FAQPage, Article, and BreadcrumbList JSON-LD schema. These are the three types most consistently correlated with AI citation in 2026 research.</div></div>
+      </div>
+    </div>
+    <div class="sources">
+      <div class="sources-heading">Sources</div>
+      <ul class="sources-list">
+        <li><span class="src-num">1</span><div><span class="src-title">AI Overviews Market Share Report 2026</span><span class="src-meta">BrightEdge · 2026</span><a class="src-link" href="https://www.brightedge.com/resources/research-reports" target="_blank">brightedge.com/resources/research-reports</a></div></li>
+        <li><span class="src-num">2</span><div><span class="src-title">Passage-Level Retrieval in Generative Search</span><span class="src-meta">Search Engine Land · 2025</span><a class="src-link" href="https://searchengineland.com" target="_blank">searchengineland.com</a></div></li>
+        <li><span class="src-num">3</span><div><span class="src-title">Perplexity Monthly Active Users Milestone</span><span class="src-meta">Perplexity · 2026</span><a class="src-link" href="https://www.perplexity.ai" target="_blank">perplexity.ai</a></div></li>
+        <li><span class="src-num">4</span><div><span class="src-title">AI Citation Ranking Factors Study</span><span class="src-meta">Authoritas · Late 2025</span><a class="src-link" href="https://www.authoritas.com/resources" target="_blank">authoritas.com/resources</a></div></li>
+        <li><span class="src-num">5</span><div><span class="src-title">Gartner Hype Cycle for AI in Marketing 2026</span><span class="src-meta">Gartner · 2026</span><a class="src-link" href="https://www.gartner.com/en/marketing" target="_blank">gartner.com/en/marketing</a></div></li>
+      </ul>
+    </div>
+    <div class="closing-cta">
+      <div class="cta-title">Need Expert Help With <span>AI Search Optimization?</span></div>
+      <p class="cta-sub">Wildnet Technologies has helped 4,100+ brands scale through SEO, PPC, content, and full-funnel digital marketing. Get a free strategy call — no obligations.</p>
+      <a href="#" class="cta-btn">Book a Free 30-Min Call →</a>
+      <div class="cta-trust">19+ Years · 4,100+ Brands · Google Partner</div>
+    </div>
+  </article>
+  <aside class="sidebar">
+    <div class="sidebar-widget"><div class="sidebar-widget-title">Recent Posts</div>
+      <div class="recent-post"><a href="#">How to Rank on Google AI Overviews in 2026</a><span class="recent-post-date">May 25, 2026</span></div>
+      <div class="recent-post"><a href="#">Technical SEO Checklist: 47 Points for 2026</a><span class="recent-post-date">May 20, 2026</span></div>
+      <div class="recent-post"><a href="#">PPC vs SEO: Where to Invest in the AI Era</a><span class="recent-post-date">May 15, 2026</span></div>
+    </div>
+    <div class="sidebar-widget sidebar-cta"><div class="sidebar-cta-title">Free AI SEO Audit</div><div class="sidebar-cta-sub">See exactly where your site stands in AI search.</div><a href="#" class="sidebar-cta-btn">Book Free Audit →</a></div>
+    <div class="sidebar-widget"><div class="sidebar-widget-title">Topics</div><div class="sidebar-tags"><a href="#" class="tag">AI SEO</a><a href="#" class="tag">Technical SEO</a><a href="#" class="tag">Google AI Overviews</a><a href="#" class="tag">PPC</a><a href="#" class="tag">E-E-A-T</a><a href="#" class="tag">Perplexity</a></div></div>
+  </aside>
+</div>
+<footer class="site-footer"><div class="site-footer-inner">
+  <div class="footer-top">
+    <div><a href="#" class="site-logo" style="display:inline-flex;margin-bottom:8px"><div class="site-logo-mark" style="width:30px;height:30px;font-size:11px">WN</div><div class="site-logo-text" style="margin-left:7px">Wildnet Technologies<span>Digital Marketing Agency</span></div></a><p class="footer-brand-desc">Full-funnel digital marketing for 4,100+ brands — since 2005.</p><span class="footer-gp"> Google Partner</span></div>
+    <div class="footer-col"><div class="footer-col-title">Services</div><a href="#">SEO Services</a><a href="#">PPC Management</a><a href="#">Link Building</a><a href="#">Content Marketing</a></div>
+    <div class="footer-col"><div class="footer-col-title">Company</div><a href="#">About Us</a><a href="#">Case Studies</a><a href="#">Blog</a><a href="#">Contact</a></div>
+    <div class="footer-col"><div class="footer-col-title">Contact</div><a href="#">hello@wildnettechnologies.com</a><a href="#">Gurugram, India</a></div>
+  </div>
+  <div class="footer-bottom"><span>© 2026 Wildnet Technologies.</span><div style="display:flex;gap:14px"><a href="#">Privacy</a><a href="#">Terms</a></div></div>
+</div></footer>
+<script>
+window.addEventListener("scroll",function(){var d=document.documentElement;var p=(d.scrollTop||document.body.scrollTop)/(d.scrollHeight-d.clientHeight)*100;document.getElementById("reading-progress").style.width=Math.min(p,100)+"%";});
+(function(){var hs=document.querySelectorAll("article h2[id]");var list=document.getElementById("tl");if(!list)return;hs.forEach(function(h){var li=document.createElement("li");li.style.cssText="display:flex;align-items:baseline;gap:8px;padding:5px 0;border-bottom:1px dashed #f3f4f6;counter-increment:toc";var a=document.createElement("a");a.href="#"+h.id;a.textContent=h.textContent;a.style.cssText="font-size:13px;color:#374151;text-decoration:none;font-weight:500";li.appendChild(a);list.appendChild(li);});})();
+document.querySelectorAll(".faq-item").forEach(function(item){item.querySelector(".faq-q").addEventListener("click",function(){var was=item.classList.contains("open");document.querySelectorAll(".faq-item").forEach(function(i){i.classList.remove("open");});if(!was)item.classList.add("open");});});
+(function(){var faqs=[];document.querySelectorAll(".faq-item").forEach(function(item){var q=item.querySelector(".faq-q-text");var a=item.querySelector(".faq-a");if(q&&a)faqs.push({"@type":"Question","name":q.textContent.trim(),"acceptedAnswer":{"@type":"Answer","text":a.textContent.trim()}});});var schemas=[{"@context":"https://schema.org","@type":"FAQPage","mainEntity":faqs},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.wildnettechnologies.com/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://www.wildnettechnologies.com/blogs/"},{"@type":"ListItem","position":3,"name":"Post","item":window.location.href}]}];schemas.forEach(function(s){var el=document.createElement("script");el.type="application/ld+json";el.textContent=JSON.stringify(s);document.head.appendChild(el);});})();
+<\/script>
+</body></html>`;
+}
+
+/* ── INIT ── */
+updateCounts();
+document.getElementById('schedule-dt').addEventListener('change',updatePublishScheduleCheck);
+document.getElementById('field-title').addEventListener('input',updateCounts);
+document.getElementById('field-meta').addEventListener('input',updateCounts);
+document.getElementById('field-body').addEventListener('input',updateCounts);
+</script>
+</body>
+</html>
