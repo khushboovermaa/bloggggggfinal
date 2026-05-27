@@ -208,8 +208,8 @@
       <div style="position:relative;display:inline-block" id="createDropdownWrap">
         <button class="settings-btn" onclick="toggleCreateDropdown()" style="background:linear-gradient(135deg,#4f8eff,#a78bfa);color:#fff;border:none">✦ Create New ▾</button>
         <div id="createDropdown" style="display:none;position:absolute;top:38px;right:0;background:var(--surface);border:1px solid var(--border);border-radius:10px;min-width:180px;z-index:200;box-shadow:0 8px 32px rgba(0,0,0,0.4);overflow:hidden">
-          <div onclick="openCreatePost('blog')" style="padding:10px 16px;font-size:12px;font-weight:600;cursor:pointer;color:var(--text);display:flex;align-items:center;gap:8px;transition:background 0.1s" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background=''"">📝 Blog Post</div>
-          <div onclick="openCreatePost('service')" style="padding:10px 16px;font-size:12px;font-weight:600;cursor:pointer;color:var(--text);display:flex;align-items:center;gap:8px;border-top:1px solid var(--border);transition:background 0.1s" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background=''">🛠 Service Page</div>
+          <div onclick="openCreatePost('blog');event.stopPropagation();" style="padding:10px 16px;font-size:12px;font-weight:600;cursor:pointer;color:var(--text);display:flex;align-items:center;gap:8px;transition:background 0.1s" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background=''"">📝 Blog Post</div>
+          <div onclick="openCreatePost('service');event.stopPropagation();" style="padding:10px 16px;font-size:12px;font-weight:600;cursor:pointer;color:var(--text);display:flex;align-items:center;gap:8px;border-top:1px solid var(--border);transition:background 0.1s" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background=''">🛠 Service Page</div>
         </div>
       </div>
       <button class="settings-btn" onclick="openSettings()">⚙ API Key</button>
@@ -1730,15 +1730,24 @@ function filterTable(){
 function toggleCreateDropdown(){
   var d=document.getElementById('createDropdown');
   d.style.display=d.style.display==='none'?'block':'none';
-  // close on outside click
-  setTimeout(function(){
-    document.addEventListener('click',function handler(e){
-      if(!document.getElementById('createDropdownWrap').contains(e.target)){
-        d.style.display='none';
-        document.removeEventListener('click',handler);
-      }
-    });
-  },10);
+  
+  // Prevent event bubbling that closes dropdown
+  if(d.style.display==='block'){
+    setTimeout(function(){
+      document.addEventListener('click',closeDropdownHandler);
+    },10);
+  } else {
+    document.removeEventListener('click',closeDropdownHandler);
+  }
+}
+
+function closeDropdownHandler(e){
+  var wrap=document.getElementById('createDropdownWrap');
+  var d=document.getElementById('createDropdown');
+  if(!wrap.contains(e.target)){
+    d.style.display='none';
+    document.removeEventListener('click',closeDropdownHandler);
+  }
 }
 function openCreatePost(type){
   document.getElementById('createDropdown').style.display='none';
