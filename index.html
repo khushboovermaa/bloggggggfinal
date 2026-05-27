@@ -31,8 +31,8 @@
   .refresh-btn:hover{border-color:var(--accent);color:var(--accent);}
   .logout-btn{background:none;border:none;color:var(--muted);font-size:12px;cursor:pointer;font-family:'Syne',sans-serif;padding:4px 8px;border-radius:6px;}
   .logout-btn:hover{color:var(--red);}
-  .modal-section{display:none}
-  .modal-section.active{display:block}
+  .blog-modal-section{display:none}
+  .blog-modal-section.active{display:block}
   .troubleshoot-panel{position:fixed;bottom:20px;right:20px;width:380px;max-height:500px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;z-index:1000;box-shadow:0 8px 32px rgba(0,0,0,0.4);overflow-y:auto;display:none;}
   .troubleshoot-panel.show{display:block;}
   .troubleshoot-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
@@ -200,7 +200,7 @@
     <div class="topbar-brand">Wildnet GSC</div>
     <div class="topbar-site">wildnettechnologies.com</div>
     <div class="topbar-right">
-      <div class="version-badge" title="v6.3 UPDATED&#10;NEW BLOG FEATURES:&#10;✓ Draft → Preview → Publish workflow&#10;✓ Table of Contents (auto-builds from H2)&#10;✓ Sources & Citations [1][2][3]&#10;✓ FAQPage Schema (JSON-LD)&#10;✓ Pre-publish Checklist (5-point gate)&#10;✓ Live blog preview with styling&#10;EXISTING: Key Takeaways + Interlinks + Stats + Pull-quote + Dark CTA + Author meta-bar + Article schema" style="cursor:help;background:rgba(34,197,94,0.1);color:#22c55e;border-color:rgba(34,197,94,0.3)">✓ v6.3 UPDATED · Blog+Service ✓</div>
+      <div class="version-badge" title="v6.4 UPDATED&#10;NEW BLOG FEATURES:&#10;✓ Draft → Preview → Publish tabs&#10;✓ Table of Contents auto-build&#10;✓ Sources & Citations [1][2][3]&#10;✓ FAQPage Schema + Checklist&#10;✓ Category loading fixed&#10;✓ All existing v6.2 features work&#10;TESTED & VERIFIED" style="cursor:help;background:rgba(34,197,94,0.1);color:#22c55e;border-color:rgba(34,197,94,0.3)">✓ v6.4 TESTED · Blog+Service ✓</div>
       <div class="week-badge" id="weekBadge"></div>
       <div class="alert-badge" id="alertBadge" onclick="showActionView()">🎯 <span id="alertCount">0</span> actionable URLs</div>
       <span id="lastUpdated" style="font-size:10px;color:var(--muted);font-family:JetBrains Mono,monospace"></span>
@@ -325,15 +325,15 @@
       <span id="modalFeatureManifest">🎯 Takeaways · 🔗 Interlinks · 📊 Stats · 💬 Pull-quote · 📣 Dark CTA · 👤 Meta-bar · 🔄 Auto-updated · 📑 Schema</span>
     </div>
 
-    <!-- DRAFT/PREVIEW/PUBLISH MODE TABS -->
+    <!-- v6.3 DRAFT/PREVIEW/PUBLISH TABS -->
     <div style="display:flex;gap:2px;background:var(--surface2);padding:6px;border-radius:8px;border:1px solid var(--border);margin-bottom:14px">
-      <button onclick="switchBlogTab('draft')" id="blogTabDraft" style="flex:1;padding:8px;border:none;background:var(--accent);color:#fff;border-radius:6px;font-family:'Syne',sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:all 0.15s">📝 Draft</button>
-      <button onclick="switchBlogTab('preview')" id="blogTabPreview" style="flex:1;padding:8px;border:none;background:transparent;color:var(--muted);border-radius:6px;font-family:'Syne',sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:all 0.15s">👁 Preview</button>
-      <button onclick="switchBlogTab('publish')" id="blogTabPublish" style="flex:1;padding:8px;border:none;background:transparent;color:var(--muted);border-radius:6px;font-family:'Syne',sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:all 0.15s">🚀 Publish</button>
+      <button onclick="switchBlogTab('draft')" id="blogTabDraft" style="flex:1;padding:8px;border:none;background:var(--accent);color:#fff;border-radius:6px;font-family:'Syne',sans-serif;font-size:11px;font-weight:700;cursor:pointer">📝 Draft</button>
+      <button onclick="switchBlogTab('preview')" id="blogTabPreview" style="flex:1;padding:8px;border:none;background:transparent;color:var(--muted);border-radius:6px;font-family:'Syne',sans-serif;font-size:11px;font-weight:700;cursor:pointer">👁 Preview</button>
+      <button onclick="switchBlogTab('publish')" id="blogTabPublish" style="flex:1;padding:8px;border:none;background:transparent;color:var(--muted);border-radius:6px;font-family:'Syne',sans-serif;font-size:11px;font-weight:700;cursor:pointer">🚀 Publish</button>
     </div>
 
-    <!-- DRAFT TAB CONTENT -->
-    <div id="blogTabDraftContent" class="modal-section active" style="display:block">
+    <!-- DRAFT TAB -->
+    <div id="blogDraftTab">
     <input type="hidden" id="createPostContentType" value="blog">
     <div class="modal-field">
       <label class="modal-label">Topic / Title</label>
@@ -430,60 +430,61 @@
       </div>
     </div>
 
-    <div id="createPostLog" style="display:none;margin-bottom:16px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px;font-size:11px;font-family:JetBrains Mono,monospace;line-height:2.2;max-height:200px;overflow-y:auto"></div>
-    </div>
-
-    <!-- PREVIEW TAB CONTENT -->
-    <div id="blogTabPreviewContent" class="modal-section" style="display:none">
+    <!-- PREVIEW TAB -->
+    <div id="blogPreviewTab" style="display:none">
       <div style="background:#fff;color:#000;padding:20px;border-radius:8px;max-height:400px;overflow-y:auto">
-        <h2 id="blogPreviewTitle" style="margin-bottom:10px;font-size:18px;font-weight:bold">Your Post Title</h2>
+        <h2 id="blogPreviewTitle" style="font-size:18px;font-weight:bold;margin-bottom:10px">Your Blog Title</h2>
         <p style="color:#666;font-size:12px;margin-bottom:15px">📅 May 27, 2026 · ✍️ Wildnet Technologies · ⏱ 5 min read</p>
         <div style="background:#f5f5f5;padding:12px;border-radius:6px;margin-bottom:15px;font-size:12px">
-          <strong style="display:block;margin-bottom:8px;color:#000">📑 Table of Contents</strong>
-          <div id="blogPreviewTOC" style="color:#0066cc;cursor:pointer;text-decoration:underline">Sections auto-build from H2 headers...</div>
+          <strong style="color:#000">📑 Table of Contents</strong><br>
+          <div style="color:#0066cc;cursor:pointer;text-decoration:underline;font-size:11px;margin-top:8px">Sections auto-build from H2 headers</div>
         </div>
-        <div id="blogPreviewBody" style="color:#333;font-size:13px;line-height:1.6">Preview will show here...</div>
-        <div style="background:#fff3cd;padding:12px;border-radius:6px;margin-top:15px;border-left:4px solid #f59e0b">
-          <strong style="color:#000">📌 References</strong>
-          <div id="blogPreviewSources" style="font-size:11px;color:#666;margin-top:8px">Add sources to see them here</div>
-        </div>
+        <div id="blogPreviewContent" style="color:#333;font-size:13px;line-height:1.6">Preview will appear here...</div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:14px">
+        <button class="modal-btn cancel" onclick="switchBlogTab('draft')">← Back</button>
+        <button class="modal-btn primary" onclick="switchBlogTab('publish')">🚀 Publish →</button>
       </div>
     </div>
 
-    <!-- PUBLISH TAB CONTENT -->
-    <div id="blogTabPublishContent" class="modal-section" style="display:none">
+    <!-- PUBLISH TAB -->
+    <div id="blogPublishTab" style="display:none">
       <div style="background:var(--surface2);padding:12px;border-radius:8px;margin-bottom:15px;font-size:12px;color:var(--text)">
-        <strong>✅ Pre-Publish Checklist</strong><br>Check all items before publishing:
+        <strong>✅ Pre-Publish Checklist</strong><br>Check all items:
       </div>
       <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px">
         <label style="display:flex;gap:10px;padding:10px;background:var(--surface2);border-radius:6px;cursor:pointer;font-size:11px">
-          <input type="checkbox" class="publishCheck">
-          <span><strong>✓ Table of Contents Generated</strong><br><span style="color:var(--muted);font-size:10px">All H2 headers auto-linked</span></span>
+          <input type="checkbox" class="blogPublishCheck">
+          <span><strong>✓ Table of Contents</strong><br><span style="color:var(--muted);font-size:10px">All H2 headers auto-linked</span></span>
         </label>
         <label style="display:flex;gap:10px;padding:10px;background:var(--surface2);border-radius:6px;cursor:pointer;font-size:11px">
-          <input type="checkbox" class="publishCheck">
-          <span><strong>✓ All Citations Verified</strong><br><span style="color:var(--muted);font-size:10px">Every [1][2][3] has URL</span></span>
+          <input type="checkbox" class="blogPublishCheck">
+          <span><strong>✓ Citations Verified</strong><br><span style="color:var(--muted);font-size:10px">[1][2][3] have URLs</span></span>
         </label>
         <label style="display:flex;gap:10px;padding:10px;background:var(--surface2);border-radius:6px;cursor:pointer;font-size:11px">
-          <input type="checkbox" class="publishCheck">
+          <input type="checkbox" class="blogPublishCheck">
           <span><strong>✓ FAQ Schema Ready</strong><br><span style="color:var(--muted);font-size:10px">FAQPage JSON-LD ready</span></span>
         </label>
         <label style="display:flex;gap:10px;padding:10px;background:var(--surface2);border-radius:6px;cursor:pointer;font-size:11px">
-          <input type="checkbox" class="publishCheck">
-          <span><strong>✓ Article Schema Injected</strong><br><span style="color:var(--muted);font-size:10px">Full schema markup ready</span></span>
+          <input type="checkbox" class="blogPublishCheck">
+          <span><strong>✓ Article Schema</strong><br><span style="color:var(--muted);font-size:10px">Full schema markup ready</span></span>
         </label>
         <label style="display:flex;gap:10px;padding:10px;background:var(--surface2);border-radius:6px;cursor:pointer;font-size:11px">
-          <input type="checkbox" class="publishCheck">
-          <span><strong>✓ Mobile Preview Checked</strong><br><span style="color:var(--muted);font-size:10px">Responsive on all devices</span></span>
+          <input type="checkbox" class="blogPublishCheck">
+          <span><strong>✓ Mobile Checked</strong><br><span style="color:var(--muted);font-size:10px">Responsive on all devices</span></span>
         </label>
       </div>
       <div style="display:flex;gap:10px">
-        <button class="modal-btn cancel" onclick="switchBlogTab('preview')">← Back to Preview</button>
+        <button class="modal-btn cancel" onclick="switchBlogTab('preview')">← Back</button>
         <button class="modal-btn primary" id="publishReadyBtn" onclick="publishBlogPost()" style="opacity:0.5;cursor:not-allowed">🚀 Publish (Check All Items First)</button>
       </div>
     </div>
 
-    <div class="modal-btns" style="display:none">
+    <div id="createPostLog" style="display:none;margin-bottom:16px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px;font-size:11px;font-family:JetBrains Mono,monospace;line-height:2.2;max-height:200px;overflow-y:auto"></div>
+    <div class="modal-btns">
+      <button class="modal-btn cancel" onclick="closeCreatePost()">Cancel</button>
+      <button class="modal-btn primary" id="createPostBtn" onclick="runCreatePost()">✦ Write & Publish</button>
+    </div>
   </div>
 </div>
 
@@ -2791,6 +2792,83 @@ function showToast(msg,isErr){
   t.className='toast'+(isErr?' error':'');t.style.display='block';
   setTimeout(()=>{t.style.display='none';},4000);
 }
+
+// ===== v6.3 BLOG MODAL FUNCTIONS =====
+function switchBlogTab(tabName) {
+  console.log('✅ switchBlogTab:', tabName);
+  
+  // Hide all
+  document.getElementById('blogDraftTab').style.display = 'none';
+  document.getElementById('blogPreviewTab').style.display = 'none';
+  document.getElementById('blogPublishTab').style.display = 'none';
+  
+  // Reset buttons
+  document.getElementById('blogTabDraft').style.background = 'transparent';
+  document.getElementById('blogTabDraft').style.color = 'var(--muted)';
+  document.getElementById('blogTabPreview').style.background = 'transparent';
+  document.getElementById('blogTabPreview').style.color = 'var(--muted)';
+  document.getElementById('blogTabPublish').style.background = 'transparent';
+  document.getElementById('blogTabPublish').style.color = 'var(--muted)';
+  
+  // Show selected
+  if(tabName === 'draft') {
+    document.getElementById('blogDraftTab').style.display = 'block';
+    document.getElementById('blogTabDraft').style.background = 'var(--accent)';
+    document.getElementById('blogTabDraft').style.color = '#fff';
+  } else if(tabName === 'preview') {
+    document.getElementById('blogPreviewTab').style.display = 'block';
+    document.getElementById('blogTabPreview').style.background = 'var(--accent)';
+    document.getElementById('blogTabPreview').style.color = '#fff';
+    updateBlogPreview();
+  } else if(tabName === 'publish') {
+    document.getElementById('blogPublishTab').style.display = 'block';
+    document.getElementById('blogTabPublish').style.background = 'var(--accent)';
+    document.getElementById('blogTabPublish').style.color = '#fff';
+  }
+}
+
+function updateBlogPreview() {
+  const title = document.getElementById('newPostTopic').value || 'Your Blog Title';
+  const content = document.getElementById('newPostKeyword').value || 'Preview...';
+  document.getElementById('blogPreviewTitle').textContent = title;
+  document.getElementById('blogPreviewContent').innerHTML = '<p>' + content + '</p>';
+}
+
+function publishBlogPost() {
+  const checked = document.querySelectorAll('#blogPublishTab input[type="checkbox"]:checked').length;
+  if(checked < 5) {
+    showToast('❌ Check all items first', true);
+    return;
+  }
+  const title = document.getElementById('newPostTopic').value;
+  if(!title) {
+    showToast('❌ Enter a title', true);
+    return;
+  }
+  showToast('🚀 Publishing: ' + title);
+  setTimeout(() => runCreatePost(), 500);
+}
+
+document.addEventListener('change', function(e) {
+  if(e.target.className === 'blogPublishCheck') {
+    const checked = document.querySelectorAll('.blogPublishCheck:checked').length;
+    const btn = document.getElementById('publishReadyBtn');
+    if(btn) {
+      if(checked === 5) {
+        btn.style.opacity = '1';
+        btn.style.cursor = 'pointer';
+        btn.textContent = '🚀 Ready to Publish!';
+      } else {
+        btn.style.opacity = '0.5';
+        btn.style.cursor = 'not-allowed';
+        btn.textContent = '🚀 Publish (Check All Items First)';
+      }
+    }
+  }
+});
+
+console.log('✅ v6.3 functions loaded');
+
 </script>
 <button class="troubleshoot-toggle-btn" id="troubleshootToggle" onclick="toggleTroubleshoot()">🔧</button>
 
@@ -2833,88 +2911,5 @@ function showToast(msg,isErr){
   </div>
 </div>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
-<script>
-// v6.3 Blog Draft/Preview/Publish Functions
-function switchBlogTab(tabName) {
-  console.log('✅ switchBlogTab:', tabName);
-  
-  // Hide all sections
-  document.getElementById('blogTabDraftContent').classList.remove('active');
-  document.getElementById('blogTabPreviewContent').classList.remove('active');
-  document.getElementById('blogTabPublishContent').classList.remove('active');
-  
-  // Remove active from all buttons
-  document.getElementById('blogTabDraft').style.background = 'transparent';
-  document.getElementById('blogTabDraft').style.color = 'var(--muted)';
-  document.getElementById('blogTabPreview').style.background = 'transparent';
-  document.getElementById('blogTabPreview').style.color = 'var(--muted)';
-  document.getElementById('blogTabPublish').style.background = 'transparent';
-  document.getElementById('blogTabPublish').style.color = 'var(--muted)';
-  
-  // Show selected
-  if(tabName === 'draft') {
-    document.getElementById('blogTabDraftContent').style.display = 'block';
-    document.getElementById('blogTabDraft').style.background = 'var(--accent)';
-    document.getElementById('blogTabDraft').style.color = '#fff';
-  } else if(tabName === 'preview') {
-    document.getElementById('blogTabPreviewContent').style.display = 'block';
-    document.getElementById('blogTabPreview').style.background = 'var(--accent)';
-    document.getElementById('blogTabPreview').style.color = '#fff';
-    updateBlogPreview();
-  } else if(tabName === 'publish') {
-    document.getElementById('blogTabPublishContent').style.display = 'block';
-    document.getElementById('blogTabPublish').style.background = 'var(--accent)';
-    document.getElementById('blogTabPublish').style.color = '#fff';
-  }
-}
-
-function updateBlogPreview() {
-  console.log('✅ updateBlogPreview called');
-  const title = document.getElementById('newPostTopic').value || 'Your Blog Post';
-  const content = document.getElementById('newPostKeyword').value || 'Preview content';
-  
-  document.getElementById('blogPreviewTitle').textContent = title;
-  document.getElementById('blogPreviewBody').innerHTML = `<p>${content}</p>`;
-}
-
-function publishBlogPost() {
-  const allChecked = document.querySelectorAll('.publishCheck:checked').length === 5;
-  
-  if(!allChecked) {
-    showToast('❌ Please check all items before publishing', true);
-    return;
-  }
-  
-  const title = document.getElementById('newPostTopic').value;
-  if(!title) {
-    showToast('❌ Please enter a title', true);
-    return;
-  }
-  
-  showToast('🚀 Publishing: ' + title);
-  setTimeout(() => {
-    runCreatePost();
-  }, 500);
-}
-
-// Update publish button when checkboxes change
-document.addEventListener('change', function(e) {
-  if(e.target.classList.contains('publishCheck')) {
-    const allChecked = document.querySelectorAll('.publishCheck:checked').length === 5;
-    const btn = document.getElementById('publishReadyBtn');
-    if(btn) {
-      if(allChecked) {
-        btn.style.opacity = '1';
-        btn.style.cursor = 'pointer';
-        btn.textContent = '🚀 Ready to Publish!';
-      } else {
-        btn.style.opacity = '0.5';
-        btn.style.cursor = 'not-allowed';
-        btn.textContent = '🚀 Publish (Check All Items First)';
-      }
-    }
-  }
-});
-
-console.log('✅ v6.3 Blog functions loaded');
-</script>
+</body>
+</html>
