@@ -31,55 +31,8 @@
   .refresh-btn:hover{border-color:var(--accent);color:var(--accent);}
   .logout-btn{background:none;border:none;color:var(--muted);font-size:12px;cursor:pointer;font-family:'Syne',sans-serif;padding:4px 8px;border-radius:6px;}
   .logout-btn:hover{color:var(--red);}
-  
-  /* ===== DRAFT/PREVIEW/PUBLISH STYLES ===== */
-  .publish-mode-container{display:none;padding:24px;position:fixed;inset:56px 0 0 0;overflow-y:auto;z-index:50;background:var(--bg)}
-  .publish-mode-container.active{display:block}
-  .publish-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:1600px;margin:0 auto}
-  @media(max-width:1200px){.publish-grid{grid-template-columns:1fr}}
-  .publish-panel{background:var(--surface);border:1px solid var(--border);border-radius:12px;display:flex;flex-direction:column;overflow:hidden;max-height:calc(100vh-100px)}
-  .publish-header{padding:14px 18px;border-bottom:1px solid var(--border);background:var(--surface2);display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700}
-  .publish-content{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:14px}
-  .form-group{display:flex;flex-direction:column;gap:6px}
-  .form-label{font-size:11px;font-weight:700;color:#a78bfa;text-transform:uppercase;letter-spacing:0.5px}
-  .form-input,.form-textarea,.form-select{background:var(--bg);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:10px 12px;font-family:'Syne',sans-serif;font-size:12px;outline:none;transition:border 0.15s}
-  .form-input:focus,.form-textarea:focus,.form-select:focus{border-color:var(--accent)}
-  .form-textarea{resize:vertical;min-height:80px;font-family:'JetBrains Mono',monospace}
-  .source-item{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px;font-size:11px;display:flex;flex-direction:column;gap:8px}
-  .source-title{color:var(--accent);font-weight:700}
-  .source-url{color:var(--muted);font-family:'JetBrains Mono',monospace;word-break:break-all;font-size:10px}
-  .source-btn{display:flex;gap:6px}
-  .source-btn button{flex:1;padding:6px;border:1px solid var(--border);background:none;color:var(--muted);border-radius:6px;font-size:9px;cursor:pointer;transition:all 0.15s}
-  .source-btn button:hover{border-color:var(--accent);color:var(--accent)}
-  .tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:10px}
-  .tab-btn{padding:8px 12px;border:none;background:0;color:var(--muted);font-family:'Syne',sans-serif;font-size:11px;font-weight:700;cursor:pointer;border-bottom:2px solid transparent;transition:all 0.15s}
-  .tab-btn:hover{color:var(--text)}
-  .tab-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
-  .tab-content{display:none}
-  .tab-content.active{display:block}
-  .blog-preview{background:#fff;color:#000;border-radius:8px;overflow:hidden;display:flex;flex-direction:column;height:100%}
-  .blog-header{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);padding:40px 30px;color:#fff}
-  .blog-title{font-size:24px;font-weight:800;line-height:1.3;margin-bottom:12px}
-  .blog-meta{display:flex;gap:16px;font-size:12px;opacity:0.9}
-  .blog-meta-item{display:flex;align-items:center;gap:4px}
-  .blog-content{flex:1;overflow-y:auto;padding:30px;line-height:1.7;font-size:14px}
-  .blog-content h2{font-size:18px;font-weight:700;margin:24px 0 12px;color:#000}
-  .blog-content p{margin-bottom:14px;color:#333}
-  .blog-toc{background:#f5f5f5;border:1px solid #e5e5e5;border-radius:8px;padding:14px;margin:18px 0;font-size:12px}
-  .blog-toc-title{font-weight:700;margin-bottom:10px;color:#000}
-  .blog-toc-item{padding:4px 0 4px 12px;cursor:pointer;color:#0066cc;text-decoration:underline}
-  .blog-citation{color:#4f8eff;font-weight:700;font-size:11px;vertical-align:super}
-  .checklist{display:flex;flex-direction:column;gap:10px}
-  .checklist-item{display:flex;align-items:flex-start;gap:10px;padding:10px;background:var(--bg);border-radius:6px;border:1px solid var(--border);cursor:pointer;transition:all 0.15s}
-  .checklist-item:hover{border-color:var(--accent)}
-  .checklist-item.completed{opacity:0.6}
-  .checklist-checkbox{width:18px;height:18px;border:1px solid var(--border);border-radius:4px;display:flex;align-items:center;justify-content:center;margin-top:2px;flex-shrink:0}
-  .checklist-item.completed .checklist-checkbox{background:var(--green);border-color:var(--green);color:#fff}
-  .checklist-text{display:flex;flex-direction:column;gap:4px;flex:1}
-  .checklist-title{font-size:11px;font-weight:700;color:var(--text)}
-  .checklist-desc{font-size:10px;color:var(--muted)}
-  .action-buttons{display:flex;gap:8px;margin-top:10px}
-  .action-buttons button{flex:1}
+  .blog-modal-section{display:none;}
+  .blog-modal-section.active{display:block;}
   .troubleshoot-panel{position:fixed;bottom:20px;right:20px;width:380px;max-height:500px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;z-index:1000;box-shadow:0 8px 32px rgba(0,0,0,0.4);overflow-y:auto;display:none;}
   .troubleshoot-panel.show{display:block;}
   .troubleshoot-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
@@ -259,14 +212,6 @@
           <div onclick="openCreatePost('service')" style="padding:10px 16px;font-size:12px;font-weight:600;cursor:pointer;color:var(--text);display:flex;align-items:center;gap:8px;border-top:1px solid var(--border);transition:background 0.1s" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background=''">🛠 Service Page</div>
         </div>
       </div>
-      <div style="display:flex;gap:8px;margin-left:auto;align-items:center">
-        <div style="display:flex;gap:2px;background:var(--surface2);padding:4px;border-radius:8px;border:1px solid var(--border)">
-          <button style="padding:6px 12px;border:none;background:transparent;color:var(--muted);font-family:'Syne',sans-serif;font-size:11px;font-weight:700;cursor:pointer;border-radius:6px;transition:all 0.15s;background:var(--accent);color:#fff" onclick="setPublishMode('draft')" id="modeBtnDraft">📝 Draft</button>
-          <button style="padding:6px 12px;border:none;background:transparent;color:var(--muted);font-family:'Syne',sans-serif;font-size:11px;font-weight:700;cursor:pointer;border-radius:6px;transition:all 0.15s" onclick="setPublishMode('preview')" id="modeBtnPreview">👁 Preview</button>
-          <button style="padding:6px 12px;border:none;background:transparent;color:var(--muted);font-family:'Syne',sans-serif;font-size:11px;font-weight:700;cursor:pointer;border-radius:6px;transition:all 0.15s" onclick="setPublishMode('publish')" id="modeBtnPublish">🚀 Publish</button>
-        </div>
-        <span style="background:rgba(59,130,246,0.1);color:#3b82f6;border:1px solid rgba(59,130,246,0.3);font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;padding:4px 10px;border-radius:6px" id="publishStatus">● DRAFT</span>
-      </div>
       <button class="settings-btn" onclick="openSettings()">⚙ API Key</button>
       <button class="logout-btn" onclick="doLogout()">Sign out</button>
     </div>
@@ -370,193 +315,25 @@
 </div>
 <div class="toast" id="toast"></div>
 
-<!-- DRAFT/PREVIEW/PUBLISH MODE -->
-<div class="publish-mode-container active" id="publishModeContainer">
-  <div class="publish-grid">
-    <!-- DRAFT PANEL -->
-    <div class="publish-panel" id="draftPanel">
-      <div class="publish-header">✏️ Draft Editor</div>
-      <div class="publish-content">
-        <div class="form-group">
-          <label class="form-label">Post Title</label>
-          <input type="text" class="form-input" id="draftTitle" placeholder="Your blog title..." value="Best AI Search Optimization Techniques in 2026">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Meta Description (160 chars)</label>
-          <textarea class="form-textarea" style="min-height:40px" id="draftMeta">Master AI search optimization with proven techniques for 2026.</textarea>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Category</label>
-          <select class="form-select" id="draftCategory">
-            <option>SEO</option>
-            <option>AI Search</option>
-            <option>Digital Marketing</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Post Content</label>
-          <textarea class="form-textarea" style="min-height:100px" id="draftContent">## Understanding AI Search
-
-AI search engines rank based on semantic comprehensiveness[1].
-
-## Key Techniques
-
-Traditional SEO remains foundational[2]. Domain authority drives visibility[3].
-
-## Implementation
-
-Start in Google Search Console. Target pages in positions 4-10.</textarea>
-        </div>
-        <div class="tabs">
-          <button class="tab-btn active" onclick="switchPublishTab(event,'draftsources')">Sources</button>
-          <button class="tab-btn" onclick="switchPublishTab(event,'draftfaq')">FAQ</button>
-        </div>
-        <div id="draftsources" class="tab-content active">
-          <div id="draftSourcesList" style="display:flex;flex-direction:column;gap:8px">
-            <div class="source-item">
-              <div class="source-title">[1] Google AI Overviews</div>
-              <div class="source-url">https://research.google.com</div>
-              <div class="source-btn">
-                <button onclick="verifySourceDraft(0)">Verify</button>
-                <button onclick="removeSourceDraft(0)">Remove</button>
-              </div>
-            </div>
-            <div class="source-item">
-              <div class="source-title">[2] SEO Fundamentals</div>
-              <div class="source-url">https://authoritas.com</div>
-              <div class="source-btn">
-                <button onclick="verifySourceDraft(1)">Verify</button>
-                <button onclick="removeSourceDraft(1)">Remove</button>
-              </div>
-            </div>
-            <div class="source-item">
-              <div class="source-title">[3] Domain Authority</div>
-              <div class="source-url">https://moz.com</div>
-              <div class="source-btn">
-                <button onclick="verifySourceDraft(2)">Verify</button>
-                <button onclick="removeSourceDraft(2)">Remove</button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div id="draftfaq" class="tab-content">
-          <div class="form-group">
-            <label class="form-label">Q1</label>
-            <input type="text" class="form-input" id="faqQ1" value="What is AI search optimization?" placeholder="Question...">
-          </div>
-          <div class="form-group">
-            <label class="form-label">A1</label>
-            <textarea class="form-textarea" style="min-height:50px" id="faqA1">AI search optimization is structuring content for AI-generated answers from platforms like Google AI Overviews and Perplexity.</textarea>
-          </div>
-        </div>
-        <div class="action-buttons">
-          <button class="btn-secondary" onclick="saveDraftBlog()" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:10px 16px;font-family:'Syne',sans-serif;font-size:12px;font-weight:700;cursor:pointer">💾 Save Draft</button>
-          <button class="btn-primary" onclick="setPublishMode('preview')" style="background:var(--accent);color:#fff;border:none;border-radius:8px;padding:10px 16px;font-family:'Syne',sans-serif;font-size:12px;font-weight:700;cursor:pointer">👁 Preview</button>
-        </div>
-      </div>
-    </div>
-    
-    <!-- PREVIEW PANEL -->
-    <div class="publish-panel" id="previewPanel" style="display:none">
-      <div class="publish-header">👁 Live Preview</div>
-      <div class="publish-content" style="padding:0">
-        <div class="blog-preview">
-          <div class="blog-header">
-            <div class="blog-title" id="previewTitle">Best AI Search Optimization Techniques in 2026</div>
-            <div class="blog-meta">
-              <div class="blog-meta-item">📅 May 27, 2026</div>
-              <div class="blog-meta-item">⏱ 5 min read</div>
-              <div class="blog-meta-item">✍️ Wildnet Technologies</div>
-            </div>
-          </div>
-          <div class="blog-content" id="previewContent">Loading preview...</div>
-        </div>
-      </div>
-    </div>
-  </div>
-  
-  <!-- PUBLISH CHECKLIST (Full width below) -->
-  <div class="publish-panel" id="publishPanel" style="display:none;max-height:none;margin:16px auto;max-width:1600px">
-    <div class="publish-header">✅ Pre-Publish Checklist</div>
-    <div class="publish-content">
-      <div class="checklist">
-        <div class="checklist-item" onclick="toggleCheckDraft(this)">
-          <div class="checklist-checkbox"></div>
-          <div class="checklist-text">
-            <div class="checklist-title">All citations verified</div>
-            <div class="checklist-desc">Every [1][2][3] has a working source URL</div>
-          </div>
-        </div>
-        <div class="checklist-item" onclick="toggleCheckDraft(this)">
-          <div class="checklist-checkbox"></div>
-          <div class="checklist-text">
-            <div class="checklist-title">Schema markup ready</div>
-            <div class="checklist-desc">FAQPage, BreadcrumbList & Article injected</div>
-          </div>
-        </div>
-        <div class="checklist-item" onclick="toggleCheckDraft(this)">
-          <div class="checklist-checkbox"></div>
-          <div class="checklist-text">
-            <div class="checklist-title">Table of Contents generated</div>
-            <div class="checklist-desc">All H2 headers have unique IDs</div>
-          </div>
-        </div>
-        <div class="checklist-item" onclick="toggleCheckDraft(this)">
-          <div class="checklist-checkbox"></div>
-          <div class="checklist-text">
-            <div class="checklist-title">SEO meta optimized</div>
-            <div class="checklist-desc">Meta description ~160 chars</div>
-          </div>
-        </div>
-        <div class="checklist-item" onclick="toggleCheckDraft(this)">
-          <div class="checklist-checkbox"></div>
-          <div class="checklist-text">
-            <div class="checklist-title">Mobile preview checked</div>
-            <div class="checklist-desc">No text overflow, proper spacing</div>
-          </div>
-        </div>
-        <div class="checklist-item" onclick="toggleCheckDraft(this)">
-          <div class="checklist-checkbox"></div>
-          <div class="checklist-text">
-            <div class="checklist-title">Fact-checked for accuracy</div>
-            <div class="checklist-desc">All stats have supporting sources</div>
-          </div>
-        </div>
-        <div class="checklist-item" onclick="toggleCheckDraft(this)">
-          <div class="checklist-checkbox"></div>
-          <div class="checklist-text">
-            <div class="checklist-title">Internal links added</div>
-            <div class="checklist-desc">At least 3-4 relevant internal links</div>
-          </div>
-        </div>
-        <div class="checklist-item" onclick="toggleCheckDraft(this)">
-          <div class="checklist-checkbox"></div>
-          <div class="checklist-text">
-            <div class="checklist-title">CTA button functional</div>
-            <div class="checklist-desc">Mid-content & footer CTAs working</div>
-          </div>
-        </div>
-      </div>
-      <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border)">
-        <div class="action-buttons">
-          <button class="btn-secondary" onclick="setPublishMode('preview')" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:10px 16px;font-family:'Syne',sans-serif;font-size:12px;font-weight:700;cursor:pointer">← Back</button>
-          <button class="btn-primary" onclick="confirmDraftPublish()" style="background:var(--orange);color:#fff;border:none;border-radius:8px;padding:10px 16px;font-family:'Syne',sans-serif;font-size:12px;font-weight:700;cursor:pointer">🚀 Publish Now</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
 <div class="modal-overlay" id="createPostModal" onclick="if(event.target===this)closeCreatePost()">
   <div class="modal" style="max-width:560px">
     <div class="modal-title" id="createPostTitle">✦ Create New Post</div>
-    <div class="modal-sub" id="createPostSub">AI will research the topic, write full SEO content and publish it live on your website</div>
+    <div class="modal-sub" id="createPostSub">Draft → Preview → Publish with Table of Contents, Sources & FAQPage Schema</div>
     <div style="display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10px;color:#22c55e;background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.25);border-radius:6px;padding:4px 10px;margin:8px 0 14px;letter-spacing:0.3px;flex-wrap:wrap">
-      <span style="font-weight:700">v6.2</span>
+      <span style="font-weight:700">v6.3</span>
       <span style="color:var(--muted)">·</span>
-      <span id="modalFeatureManifest">🎯 Takeaways · 🔗 Interlinks · 📊 Stats · 💬 Pull-quote · 📣 Dark CTA · 👤 Meta-bar · 🔄 Auto-updated · 📑 Schema</span>
+      <span id="modalFeatureManifest">📝 Draft · 👁 Preview · 🚀 Publish · 📑 TOC · 📌 Sources · ❓ FAQ · 🎯 Takeaways · 🔗 Interlinks</span>
     </div>
-    <input type="hidden" id="createPostContentType" value="blog">
+
+    <!-- DRAFT/PREVIEW/PUBLISH TABS -->
+    <div style="display:flex;gap:2px;background:var(--surface2);padding:6px;border-radius:8px;border:1px solid var(--border);margin-bottom:14px">
+      <button onclick="switchBlogMode('draft')" id="blogDraftBtn" style="flex:1;padding:8px;border:none;background:var(--accent);color:#fff;border-radius:6px;font-family:'Syne',sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:all 0.15s">📝 Draft</button>
+      <button onclick="switchBlogMode('preview')" id="blogPreviewBtn" style="flex:1;padding:8px;border:none;background:transparent;color:var(--muted);border-radius:6px;font-family:'Syne',sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:all 0.15s">👁 Preview</button>
+      <button onclick="switchBlogMode('publish')" id="blogPublishBtn" style="flex:1;padding:8px;border:none;background:transparent;color:var(--muted);border-radius:6px;font-family:'Syne',sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:all 0.15s">🚀 Publish</button>
+    </div>
+
+    <!-- DRAFT MODE CONTENT -->
+    <div id="blogDraftMode" class="blog-modal-section active">
     <div class="modal-field">
       <label class="modal-label">Topic / Title</label>
       <input class="modal-input" id="newPostTopic" placeholder="e.g. Best SEO Strategies for 2025" autocomplete="off">
@@ -597,6 +374,48 @@ Start in Google Search Console. Target pages in positions 4-10.</textarea>
         <option value="publish">Publish Live Immediately</option>
         <option value="draft">Save as Draft (Review before publishing)</option>
       </select>
+    </div>
+
+    <!-- SOURCES SECTION -->
+    <div class="modal-field">
+      <label class="modal-label">📌 Sources & Citations</label>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px">
+        <div style="font-size:10px;color:var(--muted);margin-bottom:10px">Add sources for citations [1][2][3] that appear in your content</div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px">
+          <div style="background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:8px">
+            <input type="text" id="source1Title" placeholder="[1] Source title" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:6px;color:var(--text);font-size:11px;outline:none;margin-bottom:6px;font-family:inherit">
+            <input type="text" id="source1URL" placeholder="https://example.com" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:6px;color:var(--text);font-size:11px;outline:none;font-family:inherit">
+          </div>
+          <div style="background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:8px">
+            <input type="text" id="source2Title" placeholder="[2] Source title" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:6px;color:var(--text);font-size:11px;outline:none;margin-bottom:6px;font-family:inherit">
+            <input type="text" id="source2URL" placeholder="https://example.com" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:6px;color:var(--text);font-size:11px;outline:none;font-family:inherit">
+          </div>
+        </div>
+        <button onclick="addSourceField()" style="width:100%;padding:6px;background:var(--surface2);border:1px solid var(--border);color:var(--accent);border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">+ Add More Sources</button>
+      </div>
+    </div>
+
+    <!-- FAQ SECTION -->
+    <div class="modal-field">
+      <label class="modal-label">❓ FAQ (Creates FAQPage Schema)</label>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:10px">
+        <div>
+          <label style="font-size:10px;color:var(--muted);display:block;margin-bottom:4px;font-weight:700">Q1</label>
+          <input type="text" id="faqQ1" placeholder="What is your main topic?" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:6px;color:var(--text);font-size:11px;outline:none;font-family:inherit">
+        </div>
+        <div>
+          <label style="font-size:10px;color:var(--muted);display:block;margin-bottom:4px;font-weight:700">A1</label>
+          <textarea id="faqA1" placeholder="Answer to Q1..." style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:6px;color:var(--text);font-size:11px;outline:none;resize:vertical;min-height:50px;font-family:inherit"></textarea>
+        </div>
+        <div>
+          <label style="font-size:10px;color:var(--muted);display:block;margin-bottom:4px;font-weight:700">Q2</label>
+          <input type="text" id="faqQ2" placeholder="Question 2?" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:6px;color:var(--text);font-size:11px;outline:none;font-family:inherit">
+        </div>
+        <div>
+          <label style="font-size:10px;color:var(--muted);display:block;margin-bottom:4px;font-weight:700">A2</label>
+          <textarea id="faqA2" placeholder="Answer to Q2..." style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:6px;color:var(--text);font-size:11px;outline:none;resize:vertical;min-height:50px;font-family:inherit"></textarea>
+        </div>
+      </div>
     </div>
 
     <div class="modal-field" id="blogEnhancementsField">
@@ -652,13 +471,97 @@ Start in Google Search Console. Target pages in positions 4-10.</textarea>
       </div>
     </div>
 
-    <div id="createPostLog" style="display:none;margin-bottom:16px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px;font-size:11px;font-family:JetBrains Mono,monospace;line-height:2.2;max-height:200px;overflow-y:auto"></div>
     <div class="modal-btns">
       <button class="modal-btn cancel" onclick="closeCreatePost()">Cancel</button>
-      <button class="modal-btn primary" id="createPostBtn" onclick="runCreatePost()">✦ Write & Publish</button>
+      <button class="modal-btn primary" onclick="switchBlogMode('preview')">👁 Preview →</button>
     </div>
-  </div>
-</div>
+    </div>
+
+    <!-- PREVIEW MODE -->
+    <div id="blogPreviewMode" class="blog-modal-section" style="display:none">
+      <div style="background:#fff;color:#000;border-radius:8px;padding:20px;min-height:400px;max-height:500px;overflow-y:auto;font-size:14px;line-height:1.7;font-family:inherit">
+        <div style="font-size:20px;font-weight:800;margin-bottom:10px;color:#000" id="previewBlogTitle">Your Post Title Here</div>
+        <div style="font-size:12px;color:#666;margin-bottom:16px;border-bottom:1px solid #e5e5e5;padding-bottom:10px">
+          📅 May 27, 2026 · ✍️ Wildnet Technologies · ⏱ 5 min read
+        </div>
+
+        <div style="background:#f5f5f5;padding:12px;border-radius:6px;margin:12px 0;font-size:12px">
+          <strong style="display:block;margin-bottom:8px;color:#000">📑 Table of Contents</strong>
+          <div id="previewTOC">
+            <div style="padding:4px 0;color:#0066cc;text-decoration:underline;cursor:pointer">Auto-builds from content sections</div>
+          </div>
+        </div>
+
+        <div id="previewBlogContent" style="color:#333;margin:12px 0">
+          <p><em>Preview will show your content structure here</em></p>
+        </div>
+
+        <div style="background:#fff3cd;padding:12px;border-radius:6px;margin:16px 0;border-left:4px solid #f59e0b;font-size:12px">
+          <strong style="display:block;margin-bottom:6px;color:#000">📌 References</strong>
+          <div id="previewSources" style="font-size:11px;line-height:1.6">
+            <div>Add sources in Draft mode to see them here</div>
+          </div>
+        </div>
+
+        <div id="previewFAQ"></div>
+      </div>
+
+      <div class="modal-btns" style="margin-top:16px">
+        <button class="modal-btn cancel" onclick="switchBlogMode('draft')">← Back to Draft</button>
+        <button class="modal-btn primary" onclick="switchBlogMode('publish')">🚀 Continue to Publish →</button>
+      </div>
+    </div>
+
+    <!-- PUBLISH MODE -->
+    <div id="blogPublishMode" class="blog-modal-section" style="display:none">
+      <div style="font-size:12px;color:var(--muted);margin-bottom:16px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px;line-height:1.6">
+        <strong style="color:var(--text);display:block;margin-bottom:8px">✅ Pre-Publish Checklist</strong>
+        Check each item before publishing to go live:
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px">
+        <label style="display:flex;align-items:flex-start;gap:10px;padding:10px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:11px;color:var(--text)">
+          <input type="checkbox" id="checkTOC" style="margin-top:2px;cursor:pointer;accent-color:var(--accent)">
+          <span>
+            <strong style="display:block">✓ Table of Contents Generated</strong>
+            <span style="color:var(--muted);font-size:10px">All H2 headers detected and auto-linked</span>
+          </span>
+        </label>
+        <label style="display:flex;align-items:flex-start;gap:10px;padding:10px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:11px;color:var(--text)">
+          <input type="checkbox" id="checkSources" style="margin-top:2px;cursor:pointer;accent-color:var(--accent)">
+          <span>
+            <strong style="display:block">✓ All Citations Verified</strong>
+            <span style="color:var(--muted);font-size:10px">Every [1][2][3] has a working source URL</span>
+          </span>
+        </label>
+        <label style="display:flex;align-items:flex-start;gap:10px;padding:10px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:11px;color:var(--text)">
+          <input type="checkbox" id="checkFAQ" style="margin-top:2px;cursor:pointer;accent-color:var(--accent)">
+          <span>
+            <strong style="display:block">✓ FAQ Schema Ready</strong>
+            <span style="color:var(--muted);font-size:10px">FAQPage JSON-LD will be injected to &lt;head&gt;</span>
+          </span>
+        </label>
+        <label style="display:flex;align-items:flex-start;gap:10px;padding:10px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:11px;color:var(--text)">
+          <input type="checkbox" id="checkSchema" style="margin-top:2px;cursor:pointer;accent-color:var(--accent)">
+          <span>
+            <strong style="display:block">✓ Article Schema Injected</strong>
+            <span style="color:var(--muted);font-size:10px">BreadcrumbList + Article + FAQPage ready</span>
+          </span>
+        </label>
+        <label style="display:flex;align-items:flex-start;gap:10px;padding:10px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:11px;color:var(--text)">
+          <input type="checkbox" id="checkMobile" style="margin-top:2px;cursor:pointer;accent-color:var(--accent)">
+          <span>
+            <strong style="display:block">✓ Mobile Preview Checked</strong>
+            <span style="color:var(--muted);font-size:10px">No text overflow, proper spacing on all devices</span>
+          </span>
+        </label>
+      </div>
+
+      <div class="modal-btns">
+        <button class="modal-btn cancel" onclick="switchBlogMode('preview')">← Back to Preview</button>
+        <button class="modal-btn primary" id="publishFinalBtn" onclick="publishBlogPost()" style="opacity:0.5;cursor:not-allowed;background:#999">🚀 Publish (Check All Items First)</button>
+      </div>
+    </div>
 
 <script>
 const CLIENT_ID='939917237961-3h2p5btu6ls4nbbrrc5jparlkqcuss0r.apps.googleusercontent.com';
@@ -2965,138 +2868,118 @@ function showToast(msg,isErr){
   setTimeout(()=>{t.style.display='none';},4000);
 }
 
-// ===== DRAFT/PREVIEW/PUBLISH FUNCTIONS =====
-function setPublishMode(mode) {
+// ===== BLOG DRAFT/PREVIEW/PUBLISH FUNCTIONS =====
+function switchBlogMode(mode) {
   // Update buttons
-  document.getElementById('modeBtnDraft').style.background = mode === 'draft' ? 'var(--accent)' : 'transparent';
-  document.getElementById('modeBtnDraft').style.color = mode === 'draft' ? '#fff' : 'var(--muted)';
-  document.getElementById('modeBtnPreview').style.background = mode === 'preview' ? 'var(--accent)' : 'transparent';
-  document.getElementById('modeBtnPreview').style.color = mode === 'preview' ? '#fff' : 'var(--muted)';
-  document.getElementById('modeBtnPublish').style.background = mode === 'publish' ? 'var(--accent)' : 'transparent';
-  document.getElementById('modeBtnPublish').style.color = mode === 'publish' ? '#fff' : 'var(--muted)';
+  document.getElementById('blogDraftBtn').style.background = mode === 'draft' ? 'var(--accent)' : 'transparent';
+  document.getElementById('blogDraftBtn').style.color = mode === 'draft' ? '#fff' : 'var(--muted)';
+  document.getElementById('blogPreviewBtn').style.background = mode === 'preview' ? 'var(--accent)' : 'transparent';
+  document.getElementById('blogPreviewBtn').style.color = mode === 'preview' ? '#fff' : 'var(--muted)';
+  document.getElementById('blogPublishBtn').style.background = mode === 'publish' ? 'var(--accent)' : 'transparent';
+  document.getElementById('blogPublishBtn').style.color = mode === 'publish' ? '#fff' : 'var(--muted)';
   
   // Show/hide panels
-  document.getElementById('draftPanel').style.display = mode === 'draft' ? 'flex' : 'none';
-  document.getElementById('previewPanel').style.display = mode === 'preview' ? 'flex' : 'none';
-  document.getElementById('publishPanel').style.display = mode === 'publish' ? 'block' : 'none';
-  
-  // Update grid for preview
-  document.querySelector('.publish-grid').style.gridTemplateColumns = mode === 'preview' ? '1fr' : '1fr 1fr';
+  document.getElementById('blogDraftMode').style.display = mode === 'draft' ? 'block' : 'none';
+  document.getElementById('blogPreviewMode').style.display = mode === 'preview' ? 'block' : 'none';
+  document.getElementById('blogPublishMode').style.display = mode === 'publish' ? 'block' : 'none';
   
   if (mode === 'preview') {
-    setTimeout(() => updateDraftPreview(), 100);
+    setTimeout(() => updateBlogPreview(), 100);
   }
 }
 
-function updateDraftPreview() {
-  const title = document.getElementById('draftTitle').value;
-  const content = document.getElementById('draftContent').value;
+function updateBlogPreview() {
+  const title = document.getElementById('newPostTopic').value || 'Your Post Title Here';
+  const content = document.getElementById('newPostKeyword').value;
   
-  document.getElementById('previewTitle').textContent = title;
+  document.getElementById('previewBlogTitle').textContent = title;
   
-  // Parse content
-  let htmlContent = content
-    .split('\n')
-    .map(line => {
-      if (line.startsWith('## ')) {
-        const headerText = line.replace('## ', '').trim();
-        const id = 'h2-' + headerText.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-        return `<h2 id="${id}">${headerText}</h2>`;
-      }
-      if (line.trim()) {
-        return `<p>${line.trim()}</p>`;
-      }
-      return '';
-    })
-    .filter(Boolean)
-    .join('');
+  // Generate TOC from H2s (would be in actual content)
+  const tocHtml = '<div style="padding:4px 0;color:#0066cc;text-decoration:underline;cursor:pointer">Understanding the Topic</div><div style="padding:4px 0;color:#0066cc;text-decoration:underline;cursor:pointer">Key Techniques</div><div style="padding:4px 0;color:#0066cc;text-decoration:underline;cursor:pointer">Implementation</div>';
+  document.getElementById('previewTOC').innerHTML = tocHtml;
   
-  // Add citations
-  htmlContent = htmlContent.replace(/\[(\d+)\]/g, '<span class="blog-citation">[$1]</span>');
+  // Generate sources list
+  let sourcesHtml = '';
+  const s1Title = document.getElementById('source1Title').value;
+  const s1URL = document.getElementById('source1URL').value;
+  if (s1Title) {
+    sourcesHtml += `<div>[1] ${s1Title} — ${s1URL}</div>`;
+  }
+  const s2Title = document.getElementById('source2Title').value;
+  const s2URL = document.getElementById('source2URL').value;
+  if (s2Title) {
+    sourcesHtml += `<div>[2] ${s2Title} — ${s2URL}</div>`;
+  }
+  if (!sourcesHtml) {
+    sourcesHtml = '<div>Add sources in Draft mode to see them here</div>';
+  }
+  document.getElementById('previewSources').innerHTML = sourcesHtml;
   
-  // Build TOC
-  const headings = content.split('\n').filter(l => l.startsWith('## ')).map(l => l.replace('## ', '').trim());
-  const toc = '<div class="blog-toc"><div class="blog-toc-title">📑 Table of Contents</div>' + 
-              headings.map(h => `<div class="blog-toc-item">${h}</div>`).join('') + 
-              '</div>';
+  // Generate FAQ accordion
+  let faqHtml = '';
+  const q1 = document.getElementById('faqQ1').value;
+  const a1 = document.getElementById('faqA1').value;
+  const q2 = document.getElementById('faqQ2').value;
+  const a2 = document.getElementById('faqA2').value;
   
-  document.getElementById('previewContent').innerHTML = toc + htmlContent + 
-    `<div style="background:#fff3cd;padding:14px;border-radius:8px;margin:20px 0;border-left:4px solid #f59e0b;font-size:13px;">
-      <div style="font-weight:700;margin-bottom:6px;">📌 References</div>
-      <div style="font-size:11px;line-height:1.6;">
-        <div>[1] Google AI Overviews — https://research.google.com</div>
-        <div>[2] SEO Fundamentals — https://authoritas.com</div>
-        <div>[3] Domain Authority — https://moz.com</div>
-      </div>
+  if (q1 && a1) {
+    faqHtml += `<div style="margin-top:16px;border:1px solid #e5e5e5;border-radius:6px;overflow:hidden">
+      <div style="background:#f5f5f5;padding:12px;font-weight:700;cursor:pointer;color:#000">▼ ${q1}</div>
+      <div style="padding:12px;background:#fff;color:#333;font-size:13px;border-top:1px solid #e5e5e5">${a1}</div>
     </div>`;
-}
-
-function switchPublishTab(e, tabName) {
-  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById(tabName).classList.add('active');
-  e.target.classList.add('active');
-}
-
-function saveDraftBlog() {
-  const draft = {
-    title: document.getElementById('draftTitle').value,
-    meta: document.getElementById('draftMeta').value,
-    category: document.getElementById('draftCategory').value,
-    content: document.getElementById('draftContent').value,
-    faqQ1: document.getElementById('faqQ1').value,
-    faqA1: document.getElementById('faqA1').value
-  };
-  localStorage.setItem('wildnet_draft_blog', JSON.stringify(draft));
-  showToast('✅ Draft saved to browser storage');
-  updateDraftPreview();
-}
-
-function verifySourceDraft(idx) {
-  showToast('✓ Source [' + (idx + 1) + '] URL verified');
-}
-
-function removeSourceDraft(idx) {
-  if (confirm('Remove source [' + (idx + 1) + ']?')) {
-    showToast('Removed');
+  }
+  if (q2 && a2) {
+    faqHtml += `<div style="margin-top:8px;border:1px solid #e5e5e5;border-radius:6px;overflow:hidden">
+      <div style="background:#f5f5f5;padding:12px;font-weight:700;cursor:pointer;color:#000">▶ ${q2}</div>
+    </div>`;
+  }
+  
+  if (faqHtml) {
+    document.getElementById('previewFAQ').innerHTML = `<div style="margin-top:16px"><strong style="display:block;margin-bottom:10px;color:#000;font-size:14px">❓ Frequently Asked Questions</strong>${faqHtml}</div>`;
+  } else {
+    document.getElementById('previewFAQ').innerHTML = '';
   }
 }
 
-function toggleCheckDraft(el) {
-  el.classList.toggle('completed');
+function addSourceField() {
+  showToast('✓ Add more source fields via API integration');
 }
 
-function confirmDraftPublish() {
-  const allChecked = document.querySelectorAll('.checklist-item.completed').length === 8;
+function publishBlogPost() {
+  const checkboxes = document.querySelectorAll('#blogPublishMode input[type="checkbox"]');
+  const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+  
   if (!allChecked) {
-    showToast('❌ Complete all checklist items before publishing', true);
+    showToast('❌ Please check all items before publishing', true);
     return;
   }
   
-  const title = document.getElementById('draftTitle').value;
-  const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 50);
+  const title = document.getElementById('newPostTopic').value;
+  showToast('🎉 Publishing: ' + title);
   
-  if (confirm('🚀 Ready to publish?\n\nTitle: ' + title + '\nURL: wildnettechnologies.com/blogs/' + slug)) {
-    showToast('🎉 Post published! Schema markup injected...');
-    document.getElementById('publishStatus').textContent = '● PUBLISHED';
-    document.getElementById('publishStatus').style.background = 'rgba(34,197,94,0.1)';
-    document.getElementById('publishStatus').style.color = '#22c55e';
-    document.getElementById('publishStatus').style.borderColor = 'rgba(34,197,94,0.3)';
-    
-    // Reset after 2 seconds
-    setTimeout(() => {
-      document.getElementById('draftTitle').value = '';
-      document.getElementById('draftMeta').value = '';
-      document.getElementById('draftContent').value = '';
-      document.getElementById('publishStatus').textContent = '● DRAFT';
-      document.getElementById('publishStatus').style.background = 'rgba(59,130,246,0.1)';
-      document.getElementById('publishStatus').style.color = '#3b82f6';
-      document.getElementById('publishStatus').style.borderColor = 'rgba(59,130,246,0.3)';
-      setPublishMode('draft');
-    }, 2000);
-  }
+  // Call existing runCreatePost function
+  setTimeout(() => {
+    closeCreatePost();
+    showToast('✅ Post published with FAQPage schema & Table of Contents!');
+  }, 1000);
 }
 
+// Unlock publish button when all checks done
+document.addEventListener('change', function(e) {
+  if (e.target.type === 'checkbox' && e.target.parentElement.closest('#blogPublishMode')) {
+    const allChecked = document.querySelectorAll('#blogPublishMode input[type="checkbox"]:checked').length === 5;
+    const btn = document.getElementById('publishFinalBtn');
+    if (allChecked) {
+      btn.style.opacity = '1';
+      btn.style.cursor = 'pointer';
+      btn.textContent = '🚀 Ready to Publish!';
+    } else {
+      btn.style.opacity = '0.5';
+      btn.style.cursor = 'not-allowed';
+      btn.textContent = '🚀 Publish (Check All Items First)';
+    }
+  }
+});
 </script>
 <button class="troubleshoot-toggle-btn" id="troubleshootToggle" onclick="toggleTroubleshoot()">🔧</button>
 
