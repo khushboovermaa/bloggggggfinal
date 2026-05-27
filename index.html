@@ -200,7 +200,7 @@
     <div class="topbar-brand">Wildnet GSC</div>
     <div class="topbar-site">wildnettechnologies.com</div>
     <div class="topbar-right">
-      <div class="version-badge" title="v6.2&#10;BLOG: Dark-theme CTA + Stats infographic + Author meta-bar (date/updated/read-time) + Live auto-updated date + Article schema + Pull-quote + Source-required prompt + Phrase-variety rules&#10;CARRY-OVER from v6.1: Key Takeaways + Auto-interlink + Acronym fix + Anti-AI-pattern prompt&#10;SERVICE PAGE: Smart core-name extraction + Off-domain detection + FAQ dedup + Multi-variant token sweep" style="cursor:help">✓ v6.2 · Blog+Service ✓</div>
+      <div class="version-badge" title="v6.3 UPDATED&#10;NEW BLOG FEATURES:&#10;✓ Draft → Preview → Publish workflow&#10;✓ Table of Contents (auto-builds from H2)&#10;✓ Sources & Citations [1][2][3]&#10;✓ FAQPage Schema (JSON-LD)&#10;✓ Pre-publish Checklist (5-point gate)&#10;✓ Live blog preview with styling&#10;EXISTING: Key Takeaways + Interlinks + Stats + Pull-quote + Dark CTA + Author meta-bar + Article schema" style="cursor:help;background:rgba(34,197,94,0.1);color:#22c55e;border-color:rgba(34,197,94,0.3)">✓ v6.3 UPDATED · Blog+Service ✓</div>
       <div class="week-badge" id="weekBadge"></div>
       <div class="alert-badge" id="alertBadge" onclick="showActionView()">🎯 <span id="alertCount">0</span> actionable URLs</div>
       <span id="lastUpdated" style="font-size:10px;color:var(--muted);font-family:JetBrains Mono,monospace"></span>
@@ -1747,18 +1747,34 @@ function openCreatePost(type){
   var isBlog=type!=='service';
   document.getElementById('createPostContentType').value=type||'blog';
   document.getElementById('createPostTitle').textContent=isBlog?'📝 Create New Blog Post':'🛠 Create New Service Page';
-  document.getElementById('createPostSub').textContent=isBlog?'AI researches competitors, writes SEO blog post and publishes live':'AI researches competitors, writes conversion-focused service page and publishes live';
+  document.getElementById('createPostSub').textContent=isBlog?'Draft → Preview → Publish with Table of Contents, Sources & FAQPage Schema':'AI researches competitors, writes conversion-focused service page and publishes live';
   document.getElementById('slugPrefix').textContent=isBlog?'wildnettechnologies.com/blogs/':'wildnettechnologies.com/';
   document.getElementById('newPostType').value=isBlog?'posts':'pages';
+  
+  // Initialize Draft/Preview/Publish mode for blogs
+  if(isBlog && document.getElementById('blogDraftMode')) {
+    switchBlogMode('draft');
+    document.getElementById('blogDraftBtn').style.display = 'block';
+    document.getElementById('blogPreviewBtn').style.display = 'block';
+    document.getElementById('blogPublishBtn').style.display = 'block';
+  }
+  
   document.getElementById('createPostModal').style.display='flex';
   document.getElementById('createPostLog').style.display='none';
   document.getElementById('createPostLog').innerHTML='';
-  document.getElementById('createPostBtn').disabled=false;
-  document.getElementById('createPostBtn').textContent=isBlog?'✦ Write & Publish Blog':'✦ Write & Publish Service Page';
-  document.getElementById('createPostBtn').onclick=runCreatePost;
-  // Show blog enhancements (Key Takeaways + Interlinking) only for blog posts
+  
+  // Hide old button, show new ones for blogs
+  if(document.getElementById('createPostBtn')) {
+    document.getElementById('createPostBtn').style.display = isBlog ? 'none' : 'block';
+    document.getElementById('createPostBtn').disabled=false;
+    document.getElementById('createPostBtn').textContent=isBlog?'✦ Write & Publish Blog':'✦ Write & Publish Service Page';
+    document.getElementById('createPostBtn').onclick=runCreatePost;
+  }
+  
+  // Show blog enhancements only for blog posts
   var enhBox=document.getElementById('blogEnhancementsField');
   if(enhBox) enhBox.style.display=isBlog?'block':'none';
+  
   // Load WP categories
   loadWPCategories();
 }
@@ -2955,13 +2971,17 @@ function publishBlogPost() {
   }
   
   const title = document.getElementById('newPostTopic').value;
-  showToast('🎉 Publishing: ' + title);
+  if (!title) {
+    showToast('❌ Please enter a topic/title', true);
+    return;
+  }
   
-  // Call existing runCreatePost function
+  showToast('🚀 Publishing: ' + title);
+  
+  // Call the actual create post function (which handles the API call)
   setTimeout(() => {
-    closeCreatePost();
-    showToast('✅ Post published with FAQPage schema & Table of Contents!');
-  }, 1000);
+    runCreatePost();
+  }, 500);
 }
 
 // Unlock publish button when all checks done
