@@ -31,8 +31,8 @@
   .refresh-btn:hover{border-color:var(--accent);color:var(--accent);}
   .logout-btn{background:none;border:none;color:var(--muted);font-size:12px;cursor:pointer;font-family:'Syne',sans-serif;padding:4px 8px;border-radius:6px;}
   .logout-btn:hover{color:var(--red);}
-  .blog-modal-section{display:none;}
-  .blog-modal-section.active{display:block;}
+  .modal-section{display:none}
+  .modal-section.active{display:block}
   .troubleshoot-panel{position:fixed;bottom:20px;right:20px;width:380px;max-height:500px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;z-index:1000;box-shadow:0 8px 32px rgba(0,0,0,0.4);overflow-y:auto;display:none;}
   .troubleshoot-panel.show{display:block;}
   .troubleshoot-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
@@ -208,8 +208,8 @@
       <div style="position:relative;display:inline-block" id="createDropdownWrap">
         <button class="settings-btn" onclick="toggleCreateDropdown()" style="background:linear-gradient(135deg,#4f8eff,#a78bfa);color:#fff;border:none">✦ Create New ▾</button>
         <div id="createDropdown" style="display:none;position:absolute;top:38px;right:0;background:var(--surface);border:1px solid var(--border);border-radius:10px;min-width:180px;z-index:200;box-shadow:0 8px 32px rgba(0,0,0,0.4);overflow:hidden">
-          <div onclick="openCreatePost('blog');event.stopPropagation();" style="padding:10px 16px;font-size:12px;font-weight:600;cursor:pointer;color:var(--text);display:flex;align-items:center;gap:8px;transition:background 0.1s" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background=''"">📝 Blog Post</div>
-          <div onclick="openCreatePost('service');event.stopPropagation();" style="padding:10px 16px;font-size:12px;font-weight:600;cursor:pointer;color:var(--text);display:flex;align-items:center;gap:8px;border-top:1px solid var(--border);transition:background 0.1s" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background=''">🛠 Service Page</div>
+          <div onclick="openCreatePost('blog')" style="padding:10px 16px;font-size:12px;font-weight:600;cursor:pointer;color:var(--text);display:flex;align-items:center;gap:8px;transition:background 0.1s" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background=''"">📝 Blog Post</div>
+          <div onclick="openCreatePost('service')" style="padding:10px 16px;font-size:12px;font-weight:600;cursor:pointer;color:var(--text);display:flex;align-items:center;gap:8px;border-top:1px solid var(--border);transition:background 0.1s" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background=''">🛠 Service Page</div>
         </div>
       </div>
       <button class="settings-btn" onclick="openSettings()">⚙ API Key</button>
@@ -318,22 +318,23 @@
 <div class="modal-overlay" id="createPostModal" onclick="if(event.target===this)closeCreatePost()">
   <div class="modal" style="max-width:560px">
     <div class="modal-title" id="createPostTitle">✦ Create New Post</div>
-    <div class="modal-sub" id="createPostSub">Draft → Preview → Publish with Table of Contents, Sources & FAQPage Schema</div>
+    <div class="modal-sub" id="createPostSub">AI will research the topic, write full SEO content and publish it live on your website</div>
     <div style="display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:10px;color:#22c55e;background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.25);border-radius:6px;padding:4px 10px;margin:8px 0 14px;letter-spacing:0.3px;flex-wrap:wrap">
-      <span style="font-weight:700">v6.3</span>
+      <span style="font-weight:700">v6.2</span>
       <span style="color:var(--muted)">·</span>
-      <span id="modalFeatureManifest">📝 Draft · 👁 Preview · 🚀 Publish · 📑 TOC · 📌 Sources · ❓ FAQ · 🎯 Takeaways · 🔗 Interlinks</span>
+      <span id="modalFeatureManifest">🎯 Takeaways · 🔗 Interlinks · 📊 Stats · 💬 Pull-quote · 📣 Dark CTA · 👤 Meta-bar · 🔄 Auto-updated · 📑 Schema</span>
     </div>
 
-    <!-- DRAFT/PREVIEW/PUBLISH TABS -->
+    <!-- DRAFT/PREVIEW/PUBLISH MODE TABS -->
     <div style="display:flex;gap:2px;background:var(--surface2);padding:6px;border-radius:8px;border:1px solid var(--border);margin-bottom:14px">
-      <button onclick="switchBlogMode('draft')" id="blogDraftBtn" style="flex:1;padding:8px;border:none;background:var(--accent);color:#fff;border-radius:6px;font-family:'Syne',sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:all 0.15s">📝 Draft</button>
-      <button onclick="switchBlogMode('preview')" id="blogPreviewBtn" style="flex:1;padding:8px;border:none;background:transparent;color:var(--muted);border-radius:6px;font-family:'Syne',sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:all 0.15s">👁 Preview</button>
-      <button onclick="switchBlogMode('publish')" id="blogPublishBtn" style="flex:1;padding:8px;border:none;background:transparent;color:var(--muted);border-radius:6px;font-family:'Syne',sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:all 0.15s">🚀 Publish</button>
+      <button onclick="switchBlogTab('draft')" id="blogTabDraft" style="flex:1;padding:8px;border:none;background:var(--accent);color:#fff;border-radius:6px;font-family:'Syne',sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:all 0.15s">📝 Draft</button>
+      <button onclick="switchBlogTab('preview')" id="blogTabPreview" style="flex:1;padding:8px;border:none;background:transparent;color:var(--muted);border-radius:6px;font-family:'Syne',sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:all 0.15s">👁 Preview</button>
+      <button onclick="switchBlogTab('publish')" id="blogTabPublish" style="flex:1;padding:8px;border:none;background:transparent;color:var(--muted);border-radius:6px;font-family:'Syne',sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:all 0.15s">🚀 Publish</button>
     </div>
 
-    <!-- DRAFT MODE CONTENT -->
-    <div id="blogDraftMode" class="blog-modal-section active">
+    <!-- DRAFT TAB CONTENT -->
+    <div id="blogTabDraftContent" class="modal-section active" style="display:block">
+    <input type="hidden" id="createPostContentType" value="blog">
     <div class="modal-field">
       <label class="modal-label">Topic / Title</label>
       <input class="modal-input" id="newPostTopic" placeholder="e.g. Best SEO Strategies for 2025" autocomplete="off">
@@ -374,48 +375,6 @@
         <option value="publish">Publish Live Immediately</option>
         <option value="draft">Save as Draft (Review before publishing)</option>
       </select>
-    </div>
-
-    <!-- SOURCES SECTION -->
-    <div class="modal-field">
-      <label class="modal-label">📌 Sources & Citations</label>
-      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px">
-        <div style="font-size:10px;color:var(--muted);margin-bottom:10px">Add sources for citations [1][2][3] that appear in your content</div>
-        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px">
-          <div style="background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:8px">
-            <input type="text" id="source1Title" placeholder="[1] Source title" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:6px;color:var(--text);font-size:11px;outline:none;margin-bottom:6px;font-family:inherit">
-            <input type="text" id="source1URL" placeholder="https://example.com" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:6px;color:var(--text);font-size:11px;outline:none;font-family:inherit">
-          </div>
-          <div style="background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:8px">
-            <input type="text" id="source2Title" placeholder="[2] Source title" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:6px;color:var(--text);font-size:11px;outline:none;margin-bottom:6px;font-family:inherit">
-            <input type="text" id="source2URL" placeholder="https://example.com" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:6px;color:var(--text);font-size:11px;outline:none;font-family:inherit">
-          </div>
-        </div>
-        <button onclick="addSourceField()" style="width:100%;padding:6px;background:var(--surface2);border:1px solid var(--border);color:var(--accent);border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">+ Add More Sources</button>
-      </div>
-    </div>
-
-    <!-- FAQ SECTION -->
-    <div class="modal-field">
-      <label class="modal-label">❓ FAQ (Creates FAQPage Schema)</label>
-      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:10px">
-        <div>
-          <label style="font-size:10px;color:var(--muted);display:block;margin-bottom:4px;font-weight:700">Q1</label>
-          <input type="text" id="faqQ1" placeholder="What is your main topic?" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:6px;color:var(--text);font-size:11px;outline:none;font-family:inherit">
-        </div>
-        <div>
-          <label style="font-size:10px;color:var(--muted);display:block;margin-bottom:4px;font-weight:700">A1</label>
-          <textarea id="faqA1" placeholder="Answer to Q1..." style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:6px;color:var(--text);font-size:11px;outline:none;resize:vertical;min-height:50px;font-family:inherit"></textarea>
-        </div>
-        <div>
-          <label style="font-size:10px;color:var(--muted);display:block;margin-bottom:4px;font-weight:700">Q2</label>
-          <input type="text" id="faqQ2" placeholder="Question 2?" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:6px;color:var(--text);font-size:11px;outline:none;font-family:inherit">
-        </div>
-        <div>
-          <label style="font-size:10px;color:var(--muted);display:block;margin-bottom:4px;font-weight:700">A2</label>
-          <textarea id="faqA2" placeholder="Answer to Q2..." style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:6px;color:var(--text);font-size:11px;outline:none;resize:vertical;min-height:50px;font-family:inherit"></textarea>
-        </div>
-      </div>
     </div>
 
     <div class="modal-field" id="blogEnhancementsField">
@@ -471,97 +430,62 @@
       </div>
     </div>
 
-    <div class="modal-btns">
-      <button class="modal-btn cancel" onclick="closeCreatePost()">Cancel</button>
-      <button class="modal-btn primary" onclick="switchBlogMode('preview')">👁 Preview →</button>
-    </div>
+    <div id="createPostLog" style="display:none;margin-bottom:16px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px;font-size:11px;font-family:JetBrains Mono,monospace;line-height:2.2;max-height:200px;overflow-y:auto"></div>
     </div>
 
-    <!-- PREVIEW MODE -->
-    <div id="blogPreviewMode" class="blog-modal-section" style="display:none">
-      <div style="background:#fff;color:#000;border-radius:8px;padding:20px;min-height:400px;max-height:500px;overflow-y:auto;font-size:14px;line-height:1.7;font-family:inherit">
-        <div style="font-size:20px;font-weight:800;margin-bottom:10px;color:#000" id="previewBlogTitle">Your Post Title Here</div>
-        <div style="font-size:12px;color:#666;margin-bottom:16px;border-bottom:1px solid #e5e5e5;padding-bottom:10px">
-          📅 May 27, 2026 · ✍️ Wildnet Technologies · ⏱ 5 min read
-        </div>
-
-        <div style="background:#f5f5f5;padding:12px;border-radius:6px;margin:12px 0;font-size:12px">
+    <!-- PREVIEW TAB CONTENT -->
+    <div id="blogTabPreviewContent" class="modal-section" style="display:none">
+      <div style="background:#fff;color:#000;padding:20px;border-radius:8px;max-height:400px;overflow-y:auto">
+        <h2 id="blogPreviewTitle" style="margin-bottom:10px;font-size:18px;font-weight:bold">Your Post Title</h2>
+        <p style="color:#666;font-size:12px;margin-bottom:15px">📅 May 27, 2026 · ✍️ Wildnet Technologies · ⏱ 5 min read</p>
+        <div style="background:#f5f5f5;padding:12px;border-radius:6px;margin-bottom:15px;font-size:12px">
           <strong style="display:block;margin-bottom:8px;color:#000">📑 Table of Contents</strong>
-          <div id="previewTOC">
-            <div style="padding:4px 0;color:#0066cc;text-decoration:underline;cursor:pointer">Auto-builds from content sections</div>
-          </div>
+          <div id="blogPreviewTOC" style="color:#0066cc;cursor:pointer;text-decoration:underline">Sections auto-build from H2 headers...</div>
         </div>
-
-        <div id="previewBlogContent" style="color:#333;margin:12px 0">
-          <p><em>Preview will show your content structure here</em></p>
+        <div id="blogPreviewBody" style="color:#333;font-size:13px;line-height:1.6">Preview will show here...</div>
+        <div style="background:#fff3cd;padding:12px;border-radius:6px;margin-top:15px;border-left:4px solid #f59e0b">
+          <strong style="color:#000">📌 References</strong>
+          <div id="blogPreviewSources" style="font-size:11px;color:#666;margin-top:8px">Add sources to see them here</div>
         </div>
-
-        <div style="background:#fff3cd;padding:12px;border-radius:6px;margin:16px 0;border-left:4px solid #f59e0b;font-size:12px">
-          <strong style="display:block;margin-bottom:6px;color:#000">📌 References</strong>
-          <div id="previewSources" style="font-size:11px;line-height:1.6">
-            <div>Add sources in Draft mode to see them here</div>
-          </div>
-        </div>
-
-        <div id="previewFAQ"></div>
-      </div>
-
-      <div class="modal-btns" style="margin-top:16px">
-        <button class="modal-btn cancel" onclick="switchBlogMode('draft')">← Back to Draft</button>
-        <button class="modal-btn primary" onclick="switchBlogMode('publish')">🚀 Continue to Publish →</button>
       </div>
     </div>
 
-    <!-- PUBLISH MODE -->
-    <div id="blogPublishMode" class="blog-modal-section" style="display:none">
-      <div style="font-size:12px;color:var(--muted);margin-bottom:16px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px;line-height:1.6">
-        <strong style="color:var(--text);display:block;margin-bottom:8px">✅ Pre-Publish Checklist</strong>
-        Check each item before publishing to go live:
+    <!-- PUBLISH TAB CONTENT -->
+    <div id="blogTabPublishContent" class="modal-section" style="display:none">
+      <div style="background:var(--surface2);padding:12px;border-radius:8px;margin-bottom:15px;font-size:12px;color:var(--text)">
+        <strong>✅ Pre-Publish Checklist</strong><br>Check all items before publishing:
       </div>
-
-      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px">
-        <label style="display:flex;align-items:flex-start;gap:10px;padding:10px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:11px;color:var(--text)">
-          <input type="checkbox" id="checkTOC" style="margin-top:2px;cursor:pointer;accent-color:var(--accent)">
-          <span>
-            <strong style="display:block">✓ Table of Contents Generated</strong>
-            <span style="color:var(--muted);font-size:10px">All H2 headers detected and auto-linked</span>
-          </span>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px">
+        <label style="display:flex;gap:10px;padding:10px;background:var(--surface2);border-radius:6px;cursor:pointer;font-size:11px">
+          <input type="checkbox" class="publishCheck">
+          <span><strong>✓ Table of Contents Generated</strong><br><span style="color:var(--muted);font-size:10px">All H2 headers auto-linked</span></span>
         </label>
-        <label style="display:flex;align-items:flex-start;gap:10px;padding:10px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:11px;color:var(--text)">
-          <input type="checkbox" id="checkSources" style="margin-top:2px;cursor:pointer;accent-color:var(--accent)">
-          <span>
-            <strong style="display:block">✓ All Citations Verified</strong>
-            <span style="color:var(--muted);font-size:10px">Every [1][2][3] has a working source URL</span>
-          </span>
+        <label style="display:flex;gap:10px;padding:10px;background:var(--surface2);border-radius:6px;cursor:pointer;font-size:11px">
+          <input type="checkbox" class="publishCheck">
+          <span><strong>✓ All Citations Verified</strong><br><span style="color:var(--muted);font-size:10px">Every [1][2][3] has URL</span></span>
         </label>
-        <label style="display:flex;align-items:flex-start;gap:10px;padding:10px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:11px;color:var(--text)">
-          <input type="checkbox" id="checkFAQ" style="margin-top:2px;cursor:pointer;accent-color:var(--accent)">
-          <span>
-            <strong style="display:block">✓ FAQ Schema Ready</strong>
-            <span style="color:var(--muted);font-size:10px">FAQPage JSON-LD will be injected to &lt;head&gt;</span>
-          </span>
+        <label style="display:flex;gap:10px;padding:10px;background:var(--surface2);border-radius:6px;cursor:pointer;font-size:11px">
+          <input type="checkbox" class="publishCheck">
+          <span><strong>✓ FAQ Schema Ready</strong><br><span style="color:var(--muted);font-size:10px">FAQPage JSON-LD ready</span></span>
         </label>
-        <label style="display:flex;align-items:flex-start;gap:10px;padding:10px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:11px;color:var(--text)">
-          <input type="checkbox" id="checkSchema" style="margin-top:2px;cursor:pointer;accent-color:var(--accent)">
-          <span>
-            <strong style="display:block">✓ Article Schema Injected</strong>
-            <span style="color:var(--muted);font-size:10px">BreadcrumbList + Article + FAQPage ready</span>
-          </span>
+        <label style="display:flex;gap:10px;padding:10px;background:var(--surface2);border-radius:6px;cursor:pointer;font-size:11px">
+          <input type="checkbox" class="publishCheck">
+          <span><strong>✓ Article Schema Injected</strong><br><span style="color:var(--muted);font-size:10px">Full schema markup ready</span></span>
         </label>
-        <label style="display:flex;align-items:flex-start;gap:10px;padding:10px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:11px;color:var(--text)">
-          <input type="checkbox" id="checkMobile" style="margin-top:2px;cursor:pointer;accent-color:var(--accent)">
-          <span>
-            <strong style="display:block">✓ Mobile Preview Checked</strong>
-            <span style="color:var(--muted);font-size:10px">No text overflow, proper spacing on all devices</span>
-          </span>
+        <label style="display:flex;gap:10px;padding:10px;background:var(--surface2);border-radius:6px;cursor:pointer;font-size:11px">
+          <input type="checkbox" class="publishCheck">
+          <span><strong>✓ Mobile Preview Checked</strong><br><span style="color:var(--muted);font-size:10px">Responsive on all devices</span></span>
         </label>
       </div>
-
-      <div class="modal-btns">
-        <button class="modal-btn cancel" onclick="switchBlogMode('preview')">← Back to Preview</button>
-        <button class="modal-btn primary" id="publishFinalBtn" onclick="publishBlogPost()" style="opacity:0.5;cursor:not-allowed;background:#999">🚀 Publish (Check All Items First)</button>
+      <div style="display:flex;gap:10px">
+        <button class="modal-btn cancel" onclick="switchBlogTab('preview')">← Back to Preview</button>
+        <button class="modal-btn primary" id="publishReadyBtn" onclick="publishBlogPost()" style="opacity:0.5;cursor:not-allowed">🚀 Publish (Check All Items First)</button>
       </div>
     </div>
+
+    <div class="modal-btns" style="display:none">
+  </div>
+</div>
 
 <script>
 const CLIENT_ID='939917237961-3h2p5btu6ls4nbbrrc5jparlkqcuss0r.apps.googleusercontent.com';
@@ -1730,24 +1654,15 @@ function filterTable(){
 function toggleCreateDropdown(){
   var d=document.getElementById('createDropdown');
   d.style.display=d.style.display==='none'?'block':'none';
-  
-  // Prevent event bubbling that closes dropdown
-  if(d.style.display==='block'){
-    setTimeout(function(){
-      document.addEventListener('click',closeDropdownHandler);
-    },10);
-  } else {
-    document.removeEventListener('click',closeDropdownHandler);
-  }
-}
-
-function closeDropdownHandler(e){
-  var wrap=document.getElementById('createDropdownWrap');
-  var d=document.getElementById('createDropdown');
-  if(!wrap.contains(e.target)){
-    d.style.display='none';
-    document.removeEventListener('click',closeDropdownHandler);
-  }
+  // close on outside click
+  setTimeout(function(){
+    document.addEventListener('click',function handler(e){
+      if(!document.getElementById('createDropdownWrap').contains(e.target)){
+        d.style.display='none';
+        document.removeEventListener('click',handler);
+      }
+    });
+  },10);
 }
 function openCreatePost(type){
   document.getElementById('createDropdown').style.display='none';
@@ -1756,34 +1671,18 @@ function openCreatePost(type){
   var isBlog=type!=='service';
   document.getElementById('createPostContentType').value=type||'blog';
   document.getElementById('createPostTitle').textContent=isBlog?'📝 Create New Blog Post':'🛠 Create New Service Page';
-  document.getElementById('createPostSub').textContent=isBlog?'Draft → Preview → Publish with Table of Contents, Sources & FAQPage Schema':'AI researches competitors, writes conversion-focused service page and publishes live';
+  document.getElementById('createPostSub').textContent=isBlog?'AI researches competitors, writes SEO blog post and publishes live':'AI researches competitors, writes conversion-focused service page and publishes live';
   document.getElementById('slugPrefix').textContent=isBlog?'wildnettechnologies.com/blogs/':'wildnettechnologies.com/';
   document.getElementById('newPostType').value=isBlog?'posts':'pages';
-  
-  // Initialize Draft/Preview/Publish mode for blogs
-  if(isBlog && document.getElementById('blogDraftMode')) {
-    switchBlogMode('draft');
-    document.getElementById('blogDraftBtn').style.display = 'block';
-    document.getElementById('blogPreviewBtn').style.display = 'block';
-    document.getElementById('blogPublishBtn').style.display = 'block';
-  }
-  
   document.getElementById('createPostModal').style.display='flex';
   document.getElementById('createPostLog').style.display='none';
   document.getElementById('createPostLog').innerHTML='';
-  
-  // Hide old button, show new ones for blogs
-  if(document.getElementById('createPostBtn')) {
-    document.getElementById('createPostBtn').style.display = isBlog ? 'none' : 'block';
-    document.getElementById('createPostBtn').disabled=false;
-    document.getElementById('createPostBtn').textContent=isBlog?'✦ Write & Publish Blog':'✦ Write & Publish Service Page';
-    document.getElementById('createPostBtn').onclick=runCreatePost;
-  }
-  
-  // Show blog enhancements only for blog posts
+  document.getElementById('createPostBtn').disabled=false;
+  document.getElementById('createPostBtn').textContent=isBlog?'✦ Write & Publish Blog':'✦ Write & Publish Service Page';
+  document.getElementById('createPostBtn').onclick=runCreatePost;
+  // Show blog enhancements (Key Takeaways + Interlinking) only for blog posts
   var enhBox=document.getElementById('blogEnhancementsField');
   if(enhBox) enhBox.style.display=isBlog?'block':'none';
-  
   // Load WP categories
   loadWPCategories();
 }
@@ -2892,123 +2791,6 @@ function showToast(msg,isErr){
   t.className='toast'+(isErr?' error':'');t.style.display='block';
   setTimeout(()=>{t.style.display='none';},4000);
 }
-
-// ===== BLOG DRAFT/PREVIEW/PUBLISH FUNCTIONS =====
-function switchBlogMode(mode) {
-  // Update buttons
-  document.getElementById('blogDraftBtn').style.background = mode === 'draft' ? 'var(--accent)' : 'transparent';
-  document.getElementById('blogDraftBtn').style.color = mode === 'draft' ? '#fff' : 'var(--muted)';
-  document.getElementById('blogPreviewBtn').style.background = mode === 'preview' ? 'var(--accent)' : 'transparent';
-  document.getElementById('blogPreviewBtn').style.color = mode === 'preview' ? '#fff' : 'var(--muted)';
-  document.getElementById('blogPublishBtn').style.background = mode === 'publish' ? 'var(--accent)' : 'transparent';
-  document.getElementById('blogPublishBtn').style.color = mode === 'publish' ? '#fff' : 'var(--muted)';
-  
-  // Show/hide panels
-  document.getElementById('blogDraftMode').style.display = mode === 'draft' ? 'block' : 'none';
-  document.getElementById('blogPreviewMode').style.display = mode === 'preview' ? 'block' : 'none';
-  document.getElementById('blogPublishMode').style.display = mode === 'publish' ? 'block' : 'none';
-  
-  if (mode === 'preview') {
-    setTimeout(() => updateBlogPreview(), 100);
-  }
-}
-
-function updateBlogPreview() {
-  const title = document.getElementById('newPostTopic').value || 'Your Post Title Here';
-  const content = document.getElementById('newPostKeyword').value;
-  
-  document.getElementById('previewBlogTitle').textContent = title;
-  
-  // Generate TOC from H2s (would be in actual content)
-  const tocHtml = '<div style="padding:4px 0;color:#0066cc;text-decoration:underline;cursor:pointer">Understanding the Topic</div><div style="padding:4px 0;color:#0066cc;text-decoration:underline;cursor:pointer">Key Techniques</div><div style="padding:4px 0;color:#0066cc;text-decoration:underline;cursor:pointer">Implementation</div>';
-  document.getElementById('previewTOC').innerHTML = tocHtml;
-  
-  // Generate sources list
-  let sourcesHtml = '';
-  const s1Title = document.getElementById('source1Title').value;
-  const s1URL = document.getElementById('source1URL').value;
-  if (s1Title) {
-    sourcesHtml += `<div>[1] ${s1Title} — ${s1URL}</div>`;
-  }
-  const s2Title = document.getElementById('source2Title').value;
-  const s2URL = document.getElementById('source2URL').value;
-  if (s2Title) {
-    sourcesHtml += `<div>[2] ${s2Title} — ${s2URL}</div>`;
-  }
-  if (!sourcesHtml) {
-    sourcesHtml = '<div>Add sources in Draft mode to see them here</div>';
-  }
-  document.getElementById('previewSources').innerHTML = sourcesHtml;
-  
-  // Generate FAQ accordion
-  let faqHtml = '';
-  const q1 = document.getElementById('faqQ1').value;
-  const a1 = document.getElementById('faqA1').value;
-  const q2 = document.getElementById('faqQ2').value;
-  const a2 = document.getElementById('faqA2').value;
-  
-  if (q1 && a1) {
-    faqHtml += `<div style="margin-top:16px;border:1px solid #e5e5e5;border-radius:6px;overflow:hidden">
-      <div style="background:#f5f5f5;padding:12px;font-weight:700;cursor:pointer;color:#000">▼ ${q1}</div>
-      <div style="padding:12px;background:#fff;color:#333;font-size:13px;border-top:1px solid #e5e5e5">${a1}</div>
-    </div>`;
-  }
-  if (q2 && a2) {
-    faqHtml += `<div style="margin-top:8px;border:1px solid #e5e5e5;border-radius:6px;overflow:hidden">
-      <div style="background:#f5f5f5;padding:12px;font-weight:700;cursor:pointer;color:#000">▶ ${q2}</div>
-    </div>`;
-  }
-  
-  if (faqHtml) {
-    document.getElementById('previewFAQ').innerHTML = `<div style="margin-top:16px"><strong style="display:block;margin-bottom:10px;color:#000;font-size:14px">❓ Frequently Asked Questions</strong>${faqHtml}</div>`;
-  } else {
-    document.getElementById('previewFAQ').innerHTML = '';
-  }
-}
-
-function addSourceField() {
-  showToast('✓ Add more source fields via API integration');
-}
-
-function publishBlogPost() {
-  const checkboxes = document.querySelectorAll('#blogPublishMode input[type="checkbox"]');
-  const allChecked = Array.from(checkboxes).every(cb => cb.checked);
-  
-  if (!allChecked) {
-    showToast('❌ Please check all items before publishing', true);
-    return;
-  }
-  
-  const title = document.getElementById('newPostTopic').value;
-  if (!title) {
-    showToast('❌ Please enter a topic/title', true);
-    return;
-  }
-  
-  showToast('🚀 Publishing: ' + title);
-  
-  // Call the actual create post function (which handles the API call)
-  setTimeout(() => {
-    runCreatePost();
-  }, 500);
-}
-
-// Unlock publish button when all checks done
-document.addEventListener('change', function(e) {
-  if (e.target.type === 'checkbox' && e.target.parentElement.closest('#blogPublishMode')) {
-    const allChecked = document.querySelectorAll('#blogPublishMode input[type="checkbox"]:checked').length === 5;
-    const btn = document.getElementById('publishFinalBtn');
-    if (allChecked) {
-      btn.style.opacity = '1';
-      btn.style.cursor = 'pointer';
-      btn.textContent = '🚀 Ready to Publish!';
-    } else {
-      btn.style.opacity = '0.5';
-      btn.style.cursor = 'not-allowed';
-      btn.textContent = '🚀 Publish (Check All Items First)';
-    }
-  }
-});
 </script>
 <button class="troubleshoot-toggle-btn" id="troubleshootToggle" onclick="toggleTroubleshoot()">🔧</button>
 
@@ -3051,5 +2833,88 @@ document.addEventListener('change', function(e) {
   </div>
 </div>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
-</body>
-</html>
+<script>
+// v6.3 Blog Draft/Preview/Publish Functions
+function switchBlogTab(tabName) {
+  console.log('✅ switchBlogTab:', tabName);
+  
+  // Hide all sections
+  document.getElementById('blogTabDraftContent').classList.remove('active');
+  document.getElementById('blogTabPreviewContent').classList.remove('active');
+  document.getElementById('blogTabPublishContent').classList.remove('active');
+  
+  // Remove active from all buttons
+  document.getElementById('blogTabDraft').style.background = 'transparent';
+  document.getElementById('blogTabDraft').style.color = 'var(--muted)';
+  document.getElementById('blogTabPreview').style.background = 'transparent';
+  document.getElementById('blogTabPreview').style.color = 'var(--muted)';
+  document.getElementById('blogTabPublish').style.background = 'transparent';
+  document.getElementById('blogTabPublish').style.color = 'var(--muted)';
+  
+  // Show selected
+  if(tabName === 'draft') {
+    document.getElementById('blogTabDraftContent').style.display = 'block';
+    document.getElementById('blogTabDraft').style.background = 'var(--accent)';
+    document.getElementById('blogTabDraft').style.color = '#fff';
+  } else if(tabName === 'preview') {
+    document.getElementById('blogTabPreviewContent').style.display = 'block';
+    document.getElementById('blogTabPreview').style.background = 'var(--accent)';
+    document.getElementById('blogTabPreview').style.color = '#fff';
+    updateBlogPreview();
+  } else if(tabName === 'publish') {
+    document.getElementById('blogTabPublishContent').style.display = 'block';
+    document.getElementById('blogTabPublish').style.background = 'var(--accent)';
+    document.getElementById('blogTabPublish').style.color = '#fff';
+  }
+}
+
+function updateBlogPreview() {
+  console.log('✅ updateBlogPreview called');
+  const title = document.getElementById('newPostTopic').value || 'Your Blog Post';
+  const content = document.getElementById('newPostKeyword').value || 'Preview content';
+  
+  document.getElementById('blogPreviewTitle').textContent = title;
+  document.getElementById('blogPreviewBody').innerHTML = `<p>${content}</p>`;
+}
+
+function publishBlogPost() {
+  const allChecked = document.querySelectorAll('.publishCheck:checked').length === 5;
+  
+  if(!allChecked) {
+    showToast('❌ Please check all items before publishing', true);
+    return;
+  }
+  
+  const title = document.getElementById('newPostTopic').value;
+  if(!title) {
+    showToast('❌ Please enter a title', true);
+    return;
+  }
+  
+  showToast('🚀 Publishing: ' + title);
+  setTimeout(() => {
+    runCreatePost();
+  }, 500);
+}
+
+// Update publish button when checkboxes change
+document.addEventListener('change', function(e) {
+  if(e.target.classList.contains('publishCheck')) {
+    const allChecked = document.querySelectorAll('.publishCheck:checked').length === 5;
+    const btn = document.getElementById('publishReadyBtn');
+    if(btn) {
+      if(allChecked) {
+        btn.style.opacity = '1';
+        btn.style.cursor = 'pointer';
+        btn.textContent = '🚀 Ready to Publish!';
+      } else {
+        btn.style.opacity = '0.5';
+        btn.style.cursor = 'not-allowed';
+        btn.textContent = '🚀 Publish (Check All Items First)';
+      }
+    }
+  }
+});
+
+console.log('✅ v6.3 Blog functions loaded');
+</script>
